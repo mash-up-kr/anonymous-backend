@@ -20,6 +20,7 @@ ENV PORT=9003
 
 EXPOSE 9003
 
+COPY .npmrc ./
 COPY package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 
