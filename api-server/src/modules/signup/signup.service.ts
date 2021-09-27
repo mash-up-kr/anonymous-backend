@@ -48,10 +48,8 @@ export class SignupService {
         text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 30분간 유효합니다.`,
       })
       .catch((err) => {
-        throw new HttpException(
-          `Error occurred while sending email: ${err}`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        this.verifyCodeRepository.remove(newVerifyCode);
+        throw new Error(`Error occurred while sending email: ${err}`);
       });
     return { isSend: true };
   }
