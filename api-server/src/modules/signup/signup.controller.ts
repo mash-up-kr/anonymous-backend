@@ -4,7 +4,7 @@ import { SendEmailDto } from './dto/send-email.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
 import { SignupService } from './signup.service';
 
-@Controller('signup')
+@Controller('v1/api/signup')
 export class SignupController {
   constructor(private readonly signupService: SignupService) {}
 

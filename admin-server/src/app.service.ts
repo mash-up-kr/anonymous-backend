@@ -3,7 +3,7 @@ import { getNetworkInfo } from '@mash-up-kr/nest-common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
+  health(): string {
     return `<div>Hello from admin-server</div><pre>${JSON.stringify(
       getNetworkInfo(),
       null,
