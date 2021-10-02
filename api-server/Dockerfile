@@ -21,6 +21,7 @@ ENV PORT=9001
 EXPOSE 9001
 
 COPY .npmrc ./
+COPY ormconfig.js ./
 COPY package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
 
