@@ -8,8 +8,16 @@ export type HashingOptions = {
 
 export type AuthConfig = JwtModuleOptions & { hashingOptions: HashingOptions };
 
-export default registerAs('auth', async (): Promise<AuthConfig> => {
-  return {
-    ...require('../../../authconfig'),
-  };
-});
+export default registerAs(
+  'auth',
+  async (): Promise<AuthConfig> => {
+    return {
+      secret: process.env.secret ?? 'anonymous', // TODO: from environment or remote
+      signOptions: { expiresIn: '365d' },
+      hashingOptions: {
+        iv: process.env.iv ?? 'blahblah',
+        salt: '1234',
+      },
+    };
+  },
+);
