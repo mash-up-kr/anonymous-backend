@@ -37,4 +37,5 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+    hits: any;
 }
