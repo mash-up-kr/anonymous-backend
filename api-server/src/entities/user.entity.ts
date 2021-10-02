@@ -4,9 +4,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Review } from './review.entity';
 
 @Entity()
 export class User {
@@ -31,6 +33,9 @@ export class User {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @OneToMany(() => Review, review => review.user)
+  reviews: Review[];
 
   /**
    * Timestamp
