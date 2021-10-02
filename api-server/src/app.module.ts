@@ -4,16 +4,21 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import slackConfig from './core/config/slack.config';
+import mailConfig from './core/config/mail.config';
+import authConfig from './core/config/auth.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SignupModule } from './modules/signup/signup.module';
 import { HitModule } from './modules/hit/hit.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { KeywordModule } from './modules/keyword/keyword.module';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, slackConfig],
+      load: [databaseConfig, authConfig, slackConfig, mailConfig],
     }),
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({
@@ -21,9 +26,12 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       useFactory: (config: ConfigService) => config.get('database'),
       inject: [ConfigService],
     }),
-    SignupModule,
     HitModule,
+    AuthModule,
+    UserModule,
     SlackModule,
+    ReviewModule,
+    KeywordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
