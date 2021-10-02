@@ -11,6 +11,7 @@ import authConfig from './core/config/auth.config';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { KeywordModule } from './modules/keyword/keyword.module';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { KeywordModule } from './modules/keyword/keyword.module';
     AuthModule,
     UserModule,
     SlackModule,
+    ReviewModule,
     KeywordModule,
   ],
   controllers: [AppController],
