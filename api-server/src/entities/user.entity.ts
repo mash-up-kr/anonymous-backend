@@ -21,7 +21,13 @@ export class User {
   password: string;
 
   @Column()
-  nickName: string;
+  nickname: string;
+
+  @Column()
+  planetType: string;
+
+  @Column()
+  avatarItemType: string;
 
   @Column({ default: false })
   isVerified: boolean;
