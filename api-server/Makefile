@@ -1,4 +1,5 @@
 SERVICE=api-server
+VERSION=$(shell git rev-parse --short HEAD)
 REPOSITORY=$(AWS_ACCOUNT).dkr.ecr.$(AWS_REGION).amazonaws.com/$(SERVICE):$(VERSION)
 
 build: require-version
