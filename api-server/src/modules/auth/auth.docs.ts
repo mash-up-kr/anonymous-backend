@@ -2,13 +2,13 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { SendEmailResponseDto } from './dto/send-email.dto';
-import { SignupController } from './signup.controller';
+import { AuthController } from './auth.controller';
 
 type SwaggerMethodDoc<T> = {
   [K in keyof T]: (summary: string) => MethodDecorator;
 };
 
-export const docs: SwaggerMethodDoc<SignupController> = {
+export const docs: SwaggerMethodDoc<AuthController> = {
   sendEmail(summary: string) {
     return applyDecorators(
       ApiResponse({ status: 401, description: 'Unauthorized' }),

@@ -10,7 +10,7 @@ import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
 import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
 
 @Injectable()
-export class SignupService {
+export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
