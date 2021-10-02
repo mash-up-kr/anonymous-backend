@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as nodemailer from 'nodemailer';
@@ -6,8 +6,8 @@ import { randomBytes } from 'crypto';
 
 import { VerifyCode } from '../../entities/verify-code.entity';
 import { User } from '../../entities/user.entity';
-import { SendEmailDto } from './dto/send-email.dto';
-import { VerifyCodeDto } from './dto/verify-code.dto';
+import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
+import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
 
 @Injectable()
 export class SignupService {
@@ -18,7 +18,7 @@ export class SignupService {
     private verifyCodeRepository: Repository<VerifyCode>,
   ) {}
 
-  async sendEmail({ email }: SendEmailDto) {
+  async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userRepository.findOne({ email });
     if (user) return { isUserExist: true };
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
@@ -54,7 +54,10 @@ export class SignupService {
     return { isSend: true };
   }
 
-  async verifyCode({ email, code }: VerifyCodeDto) {
+  async verifyCode({
+    email,
+    code,
+  }: VerifyCodeDto): Promise<VerifyCodeResponseDto> {
     const verifyCode = await this.verifyCodeRepository.findOne({ email, code });
     if (!verifyCode) return { email, isVerify: false };
     if (verifyCode.createdAt.getTime() + 1800000 < new Date().getTime()) {
