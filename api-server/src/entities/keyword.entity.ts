@@ -1,23 +1,31 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Review } from "./review.entity";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Review } from './review.entity';
 
 @Entity()
 export class Keyword {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @ManyToMany(() => Review, review => review.keywords)
-    posts: Review[];
+  @ManyToMany(() => Review, (review) => review.keywords)
+  posts: Review[];
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @DeleteDateColumn()
-    deletedAt: Date;
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

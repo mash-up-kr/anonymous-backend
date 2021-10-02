@@ -1,45 +1,51 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Keyword } from "./keyword.entity";
-import { User } from "./user.entity";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Keyword } from './keyword.entity';
+import { User } from './user.entity';
 
 export enum Hole {
-    BLACK = "black",
-    WHITE = "white",
+  BLACK = 'black',
+  WHITE = 'white',
 }
 
 @Entity()
 export class Review {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    // @OneToOne(type => App)
-    // @JoinColumn()
-    // app: App;
+  @Column('text')
+  content: string;
 
-    @Column('text')
-    content: string;
+  @Column({
+    type: 'enum',
+    enum: Hole,
+  })
+  hole: Hole;
 
-    @Column({
-        type: "enum",
-        enum: Hole,
-    })
-    hole: Hole;
+  @ManyToMany(() => Keyword, (keyword) => keyword.posts)
+  @JoinTable({
+    name: 'review_keywords',
+  })
+  keywords: Keyword[];
 
-    @ManyToMany(() => Keyword, keyword => keyword.posts)
-    @JoinTable({
-        name: 'review_keywords'
-    })
-    keywords: Keyword[];
+  @ManyToOne(() => User, (user) => user.reviews)
+  user: User;
 
-    @ManyToOne(() => User, user => user.reviews)
-    user: User;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
-
-    @DeleteDateColumn()
-    deletedAt: Date;
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
