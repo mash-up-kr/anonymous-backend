@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Hit } from './hit.entity';
 import { Review } from './review.entity';
 
 @Entity()
@@ -34,8 +35,11 @@ export class User {
   @Column({ default: false })
   isVerified: boolean;
 
-  @OneToMany(() => Review, review => review.user)
+  @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  @OneToMany(() => Hit, (hit) => hit.user)
+  hits: Hit[];
 
   /**
    * Timestamp

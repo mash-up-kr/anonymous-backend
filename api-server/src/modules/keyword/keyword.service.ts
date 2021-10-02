@@ -1,6 +1,6 @@
+import { Keyword } from '../../entities/keyword.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Keyword } from 'src/entities/keyword.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import slackConfig from './core/config/slack.config';
 import mailConfig from './core/config/mail.config';
+import authConfig from './core/config/auth.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HitModule } from './modules/hit/hit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
-import authConfig from './core/config/auth.config';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { KeywordModule } from './modules/keyword/keyword.module';
@@ -25,6 +26,7 @@ import { ReviewModule } from './modules/review/review.module';
       useFactory: (config: ConfigService) => config.get('database'),
       inject: [ConfigService],
     }),
+    HitModule,
     AuthModule,
     UserModule,
     SlackModule,

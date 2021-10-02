@@ -1,7 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { KeywordService } from '../keyword/keyword.service';
+import { Review } from '../../entities/review.entity';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Review } from 'src/entities/review.entity';
-import { KeywordService } from 'src/modules/keyword/keyword.service';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
@@ -12,22 +16,21 @@ export class ReviewService {
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     private readonly keywordService: KeywordService,
-  ){}
+  ) {}
 
-  async create({
-    hole,
-    content,
-    keywords,
-  }: CreateReviewDto) {
+  async create({ hole, content, keywords }: CreateReviewDto) {
     const review = await this.reviewRepository.create({
       hole,
       content,
     });
-    review.keywords = keywords ? (
-      await Promise.all(
-        keywords.map(
-          async id => await this.keywordService.findOne(id)))).filter(v => v) : [];    
-    
+    review.keywords = keywords
+      ? (
+          await Promise.all(
+            keywords.map(async (id) => await this.keywordService.findOne(id)),
+          )
+        ).filter((v) => v)
+      : [];
+
     await this.reviewRepository.save(review);
 
     return review;
@@ -43,7 +46,7 @@ export class ReviewService {
     }
 
     const review = await this.reviewRepository.findOne(id, {
-      relations: ['keywords']
+      relations: ['keywords'],
     });
     if (!review) {
       throw new NotFoundException();
@@ -51,11 +54,7 @@ export class ReviewService {
     return review;
   }
 
-  async update(id: number, {
-    hole,
-    content,
-    keywords,
-  }: UpdateReviewDto) {
+  async update(id: number, { hole, content, keywords }: UpdateReviewDto) {
     const review = await this.reviewRepository.findOne(id);
     if (!review) {
       throw new NotFoundException();
@@ -65,10 +64,14 @@ export class ReviewService {
       ...review,
       hole,
       content,
-      keywords: keywords ? (await Promise.all(
-        keywords.map(
-          async id => await this.keywordService.findOne(id)))).filter(v => v) : undefined,
-    })
+      keywords: keywords
+        ? (
+            await Promise.all(
+              keywords.map(async (id) => await this.keywordService.findOne(id)),
+            )
+          ).filter((v) => v)
+        : undefined,
+    });
   }
 
   async remove(id: number): Promise<void> {
@@ -76,7 +79,7 @@ export class ReviewService {
     if (!review) {
       throw new NotFoundException();
     }
-    
+
     await this.reviewRepository.remove(review);
   }
 }
