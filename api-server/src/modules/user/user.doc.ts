@@ -1,38 +1,38 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
-import { SwaggerMethodDoc } from '../../utils/types';
-import { ReviewController } from './review.controller';
+import { SwaggerMethodDoc } from 'src/utils/types';
+import { UserController } from './user.controller';
 
-export const docs: SwaggerMethodDoc<ReviewController> = {
-  create(summary: string) {
+export const docs: SwaggerMethodDoc<UserController> = {
+  getAllUser(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
     );
   },
-  findAll(summary: string) {
+  getUser(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
     );
   },
-  findOne(summary: string) {
+  createUser(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
     );
   },
-  update(summary: string) {
+  updateUser(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
     );
   },
-  remove(summary: string) {
+  deleteUser(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,

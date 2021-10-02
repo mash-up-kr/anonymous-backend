@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
+import { docs } from './review.docs';
 
 @ApiTags('reviews')
 @Controller('review')
@@ -10,28 +19,35 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
-  @ApiBody({ type: CreateReviewDto })
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  @docs.create('리뷰를 작성합니다.')
+  async create(@Body() createReviewDto: CreateReviewDto) {
+    return await this.reviewService.create(createReviewDto);
   }
 
   @Get()
-  findAll() {
-    return this.reviewService.findAll();
+  @docs.findAll('리뷰 목록을 조회합니다.')
+  async findAll() {
+    return await this.reviewService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(+id);
+  @docs.findOne('id에 해당하는 리뷰를 조회합니다.')
+  async findOne(@Param('id') id: string) {
+    return await this.reviewService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  @docs.update('id에 해당하는 리뷰를 수정합니다.')
+  async update(
+    @Param('id') id: string,
+    @Body() updateReviewDto: UpdateReviewDto,
+  ) {
+    return await this.reviewService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(+id);
+  @docs.remove('id에 해당하는 리뷰를 삭제합니다.')
+  async remove(@Param('id') id: string) {
+    return await this.reviewService.remove(+id);
   }
 }

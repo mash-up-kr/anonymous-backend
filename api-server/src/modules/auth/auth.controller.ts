@@ -53,17 +53,20 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('login')
+  @docs.login('로그인')
   async login(@Request() req: AuthorizedRequest) {
     return this.authService.login(req.user);
   }
 
   @Post('signup')
+  @docs.signup('회원가입')
   async signup(@Body() dto: SignUpDto) {
     return this.authService.signup(dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
+  @docs.getProfile('내 정보 가져오기')
   async getProfile(@Request() req: AuthorizedRequest) {
     const {
       email,

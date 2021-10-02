@@ -1,12 +1,9 @@
+import { SwaggerMethodDoc } from '../../utils/types';
 import { applyDecorators } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { SendEmailResponseDto } from './dto/send-email.dto';
 import { AuthController } from './auth.controller';
-
-type SwaggerMethodDoc<T> = {
-  [K in keyof T]: (summary: string) => MethodDecorator;
-};
 
 export const docs: SwaggerMethodDoc<AuthController> = {
   sendEmail(summary: string) {
@@ -33,7 +30,25 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
     );
   },
-  login: undefined,
-  signup: undefined,
-  getProfile: undefined,
+  login(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+      }),
+    );
+  },
+  signup(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+      }),
+    );
+  },
+  getProfile(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+      }),
+    );
+  },
 };
