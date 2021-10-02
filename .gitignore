@@ -4,6 +4,7 @@ build
 node_modules
 
 # RC
+.env-prod.sh
 .envrc
 .npmrc
 
