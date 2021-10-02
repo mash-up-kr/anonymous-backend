@@ -10,6 +10,7 @@ import { UserModule } from './modules/user/user.module';
 import authConfig from './core/config/auth.config';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { KeywordModule } from './modules/keyword/keyword.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     AuthModule,
     UserModule,
     SlackModule,
+    KeywordModule,
   ],
   controllers: [AppController],
   providers: [AppService],
