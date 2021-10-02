@@ -5,14 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import slackConfig from './core/config/slack.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SignupModule } from './modules/signup/signup.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import authConfig from './core/config/auth.config';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, slackConfig],
+      load: [databaseConfig, authConfig, slackConfig],
     }),
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({
@@ -20,7 +22,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       useFactory: (config: ConfigService) => config.get('database'),
       inject: [ConfigService],
     }),
-    SignupModule,
+    AuthModule,
+    UserModule,
     SlackModule,
   ],
   controllers: [AppController],
