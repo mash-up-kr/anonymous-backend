@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import slackConfig from './core/config/slack.config';
+import mailConfig from './core/config/mail.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -16,7 +17,7 @@ import { ReviewModule } from './modules/review/review.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, authConfig, slackConfig],
+      load: [databaseConfig, authConfig, slackConfig, mailConfig],
     }),
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({

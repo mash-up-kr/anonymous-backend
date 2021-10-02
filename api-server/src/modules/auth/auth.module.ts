@@ -11,6 +11,7 @@ import { UserModule } from '../user/user.module';
 import { PasswordHasher } from './password-hasher';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from '../user/user.service';
+import { MailSender } from './mail-sender';
 
 @Module({
   imports: [
@@ -30,7 +31,13 @@ import { UserService } from '../user/user.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PasswordHasher, JwtStrategy, UserService],
+  providers: [
+    AuthService,
+    PasswordHasher,
+    JwtStrategy,
+    UserService,
+    MailSender,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

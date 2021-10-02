@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import * as nodemailer from 'nodemailer';
-import { randomBytes } from 'crypto';
-
-import { UserService } from '../user/user.service';
-import { VerifyCode } from '../../entities/verify-code.entity';
 import { User } from '../../entities/user.entity';
+import { VerifyCode } from '../../entities/verify-code.entity';
+import { UserService } from '../user/user.service';
 import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
-import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
+import { MailSender } from './mail-sender';
 import { PasswordHasher } from './password-hasher';
 
 @Injectable()
@@ -21,42 +19,44 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly passwordHasher: PasswordHasher,
+    private readonly mailSender: MailSender,
   ) {}
 
   async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
     if (user) return { isUserExist: true };
-    const verifyCode = await this.verifyCodeRepository.findOne({ email });
+
+    const verifyCode = await this.verifyCodeRepository.findOne({});
+
     if (verifyCode) {
       await this.verifyCodeRepository.remove(verifyCode);
     }
+
     const newVerifyCode = this.verifyCodeRepository.create({
-      code: randomBytes(64).toString('hex').slice(0, 6),
+      code: generateCode(),
       email,
     });
+
     await this.verifyCodeRepository.save(newVerifyCode);
 
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'mashup.anonymous',
-        pass: process.env.GMAIL_PASS,
-      },
-    });
-    transporter
-      .sendMail({
-        from: 'mashup.anonymous@gmail.com',
+    try {
+      await this.mailSender.send({
         to: email,
         subject: '어나니머쓱 메일 인증 테스트',
         text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 30분간 유효합니다.`,
-      })
-      .catch((err) => {
-        this.verifyCodeRepository.remove(newVerifyCode);
-        throw new Error(`Error occurred while sending email: ${err}`);
       });
+    } catch (e) {
+      this.verifyCodeRepository.remove(newVerifyCode);
+      throw new Error(`Error occurred while sending email: ${e}`);
+    }
+
     return { isSend: true };
+
+    function generateCode() {
+      return Math.floor(Math.random() * 1000000 - 1)
+        .toString()
+        .padStart(6, '0');
+    }
   }
 
   async verifyCode({
