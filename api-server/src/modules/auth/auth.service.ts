@@ -1,25 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
 
+import { UserService } from '../user/user.service';
 import { VerifyCode } from '../../entities/verify-code.entity';
 import { User } from '../../entities/user.entity';
 import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
 import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
+import { SignUpDto } from './dto/sign-up.dto';
+import { PasswordHasher } from './password-hasher';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     @InjectRepository(VerifyCode)
     private verifyCodeRepository: Repository<VerifyCode>,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
   async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
-    const user = await this.userRepository.findOne({ email });
+    const user = await this.userService.findOneByEmail(email);
     if (user) return { isUserExist: true };
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
     if (verifyCode) {
@@ -65,5 +70,47 @@ export class AuthService {
       return { email, isCodeExpired: true };
     }
     return { email, isVerify: true };
+  }
+
+  async validateUserByEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<User | null> {
+    const user = await this.userService.findOneByEmail(email);
+    if (user == null) {
+      return null;
+    }
+    if (
+      await this.passwordHasher.equal({
+        plain: password,
+        hashed: user.password,
+      })
+    ) {
+      delete user.password;
+      return user;
+    }
+    return null;
+  }
+
+  async login(user: User) {
+    const payload = { userName: user.nickname, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async signup({ email, nickname, password }: SignUpDto) {
+    const user = await this.userService.createUser({
+      email,
+      nickname,
+      password: await this.passwordHasher.hash(password),
+    });
+
+    return {
+      access_token: this.jwtService.sign({
+        userName: user.nickname,
+        sub: user.id,
+      }),
+    };
   }
 }

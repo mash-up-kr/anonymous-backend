@@ -33,4 +33,7 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
     );
   },
+  login: undefined,
+  signup: undefined,
+  getProfile: undefined,
 };

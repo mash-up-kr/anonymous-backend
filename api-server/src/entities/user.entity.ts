@@ -23,10 +23,10 @@ export class User {
   @Column()
   nickname: string;
 
-  @Column()
+  @Column({ default: null })
   planetType: string;
 
-  @Column()
+  @Column({ default: null })
   avatarItemType: string;
 
   @Column({ default: false })
