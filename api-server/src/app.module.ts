@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SignupModule } from './modules/signup/signup.module';
+import { HitModule } from './modules/hit/hit.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SignupModule } from './modules/signup/signup.module';
       inject: [ConfigService],
     }),
     SignupModule,
+    HitModule
   ],
   controllers: [AppController],
   providers: [AppService],
