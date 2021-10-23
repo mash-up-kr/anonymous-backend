@@ -25,13 +25,13 @@ async function updateTaskDefinition(client, { name, revision }) {
   // There is a single container definition for every task definitions now.
   // If there are multiple container definitions required, It should be changed.
   const originalContainerDefinition = original.containerDefinitions[0];
-  const image = originalContainerDefinition.image.replace(/:.*$/, `:${revision}`);
+  const imageArn = originalContainerDefinition.image.replace(/:.*$/, `:${revision}`);
   const updatedContainerDefinition = {
     ...originalContainerDefinition,
-    image,
+    image: imageArn,
   }
 
-  await ensureImage(image);
+  await ensureImage(imageArn);
 
   const { taskDefinition: updated } = await client.send(
     new RegisterTaskDefinitionCommand({
@@ -56,12 +56,12 @@ runECS(updateTaskDefinition);
  * @param {string} imageArn
  */
 async function ensureImage(imageArn) {
+  console.log(imageArn);
+  const [repositoryArn, imageTag] = imageArn.split(':');
+  const [, repositoryName] = repositoryArn.split('/');
+
   try {
     const client = new ECRClient({ region: process.env.AWS_REGION });
-
-    const [repositoryArn, imageTag] = imageArn.split(':');
-    const [, repositoryName] = repositoryArn.split('/');
-
     await client.send(
       new DescribeImagesCommand({
         repositoryName,

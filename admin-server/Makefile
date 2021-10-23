@@ -1,4 +1,5 @@
-SERVICE=admin-server
+NAME=admin
+SERVICE=$(NAME)-server
 VERSION=$(shell git rev-parse --short HEAD)
 REPOSITORY=$(AWS_ACCOUNT).dkr.ecr.$(AWS_REGION).amazonaws.com/$(SERVICE):$(VERSION)
 
@@ -9,8 +10,8 @@ push: require-version
 	docker push $(REPOSITORY)
 
 deploy:
-	node ../scripts/update-task-definition.js --name=admin --revision=$(VERSION)
-	node ../scripts/update-service.js --name=admin
+	node ../scripts/update-task-definition.js --name=$(NAME) --revision=$(VERSION)
+	node ../scripts/update-service.js --name=$(NAME)
 
 require-version:
 ifndef VERSION

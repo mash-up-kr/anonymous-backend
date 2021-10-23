@@ -3,6 +3,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   health(): string {
-    return 'Hello, This is image server';
+    return 'Hello, This is image server, updated';
   }
 }
