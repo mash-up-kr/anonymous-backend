@@ -1,0 +1,22 @@
+# AWS general
+export AWS_PROFILE=
+export AWS_ACCOUNT=
+export AWS_REGION=
+
+# AWS S3 config
+export BUCKET_PRIVATE=
+export BUCKET_ADMIN=
+export DISTRIBUTION_ADMIN=
+export BUCKET_PUBLIC=
+export DISTRIBUTION_CDN=
+
+# Github token
+export GITHUB_TOKEN=
+
+# Gmail credentials
+export GMAIL_PASS=
+export GMAIL_USER=
+
+# Slack webhook urls
+export SLACK_WEBHOOK_URL=
+export SLACK_WEBHOOK_URL_DEPLOY=
