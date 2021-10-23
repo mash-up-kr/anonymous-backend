@@ -43,3 +43,5 @@ coverage
 # Environment
 .env
 .env.*
+
+lambda.zip
