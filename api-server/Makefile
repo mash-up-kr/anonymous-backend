@@ -8,6 +8,10 @@ build: require-version
 push: require-version
 	docker push $(REPOSITORY)
 
+deploy:
+	node ../scripts/update-task-definition.js --name=admin --revision=$(VERSION)
+	node ../scripts/update-service.js --name=admin
+
 require-version:
 ifndef VERSION
 	$(error VERSION is not set)
