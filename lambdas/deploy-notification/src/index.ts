@@ -40,24 +40,26 @@ export const handler: Handler<EventBridgeEvent<'ECS Task State Change', ECSState
   const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK_URL_DEPLOY!);
 
   const message = buildDeployMessage(event.detail);
-  await webhook.send(message);
+  await webhook.send({
+    attachments: [message],
+  });
 
   return;
 };
 
 function buildDeployMessage({ desiredStatus, lastStatus, group, taskDefinitionArn }: ECSStateChangeEvent) {
   const color = desiredStatus === lastStatus ? Color.Green : Color.Yellow;
-  const [, hash] = taskDefinitionArn.split(':');
+  const hash = taskDefinitionArn.split(':').slice(-1)[0];
   return section(
     color,
     `
-${desiredStatus === ServiceStatus.RUNNING ? 'START' : 'STOP'} **${group}**, current: ${lastStatus}
-[goto release](https://github.com/mash-up-kr/anonymous-backend/commit/${hash})
-  `.trim()
+*${desiredStatus === ServiceStatus.RUNNING ? 'START' : 'STOP'}* \`${group}\` - current: *${lastStatus}*
+    `.trim(),
+    `https://github.com/mash-up-kr/anonymous-backend/commit/${hash}`
   );
 }
 
-function section(color: Color, text: string) {
+function section(color: Color, text: string, link: string) {
   return {
     color,
     blocks: [
@@ -66,6 +68,15 @@ function section(color: Color, text: string) {
         text: {
           type: 'mrkdwn',
           text,
+        },
+        accessory: {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'github',
+            emoji: true,
+          },
+          url: link,
         },
       },
     ],
