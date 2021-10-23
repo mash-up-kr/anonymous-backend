@@ -11,3 +11,6 @@ deploy:
 		--function-name ECSDeploymentNotification \
 		--s3-bucket $(BUCKET_PRIVATE) \
 		--s3-key lambda/ecs-deploy-notification.zip --publish
+
+all: build package deploy
+	@echo "Done"

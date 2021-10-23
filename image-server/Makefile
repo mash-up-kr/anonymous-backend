@@ -17,3 +17,6 @@ require-version:
 ifndef VERSION
 	$(error VERSION is not set)
 endif
+
+all: build push deploy
+	@echo "Done"
