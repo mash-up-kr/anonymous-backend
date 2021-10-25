@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -32,6 +32,11 @@ export class AuthService {
       await this.verifyCodeRepository.remove(verifyCode);
     }
 
+    const generateCode = () => {
+      return Math.floor(Math.random() * 1000000 - 1)
+        .toString()
+        .padStart(6, '0');
+    }
     const newVerifyCode = this.verifyCodeRepository.create({
       code: generateCode(),
       email,
@@ -51,12 +56,6 @@ export class AuthService {
     }
 
     return { isSend: true };
-
-    function generateCode() {
-      return Math.floor(Math.random() * 1000000 - 1)
-        .toString()
-        .padStart(6, '0');
-    }
   }
 
   async verifyCode({
@@ -100,12 +99,16 @@ export class AuthService {
   }
 
   async signup({ email, nickname, password }: SignUpDto) {
+    // Throw error when email is duplicated.
+    const _user = await this.userService.findOneByEmail(email);
+    if (_user == null) {
+      throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
+    }
     const user = await this.userService.createUser({
       email,
       nickname,
       password: await this.passwordHasher.hash(password),
     });
-
     return {
       access_token: this.jwtService.sign({
         userName: user.nickname,
