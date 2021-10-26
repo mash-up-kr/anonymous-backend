@@ -10,6 +10,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { SendEmailDto } from './dto/send-email.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
+import { ValidateNicknameDto } from './dto/validate-nickname.dto';
 import { AuthorizedRequest, SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
 import { docs } from './auth.docs';
@@ -85,5 +86,12 @@ export class AuthController {
       id,
     } = await this.userService.findOneById(req.user.id);
     return { email, nickname, createdAt, updatedAt, id };
+  }
+
+  @Post('validate-nickname')
+  @docs.validateNickname('닉네임 중복 확인')
+  async validateNickname(@Body() dto: ValidateNicknameDto) {
+    const res = await this.authService.validateNickname(dto);
+    return res;
   }
 }

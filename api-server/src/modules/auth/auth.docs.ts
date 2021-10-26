@@ -3,6 +3,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { SendEmailResponseDto } from './dto/send-email.dto';
+import { ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
 import { AuthController } from './auth.controller';
 
 export const docs: SwaggerMethodDoc<AuthController> = {
@@ -26,6 +27,17 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       ApiCreatedResponse({
         type: VerifyCodeResponseDto,
       }),
+    );
+  },
+  validateNickname(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '유저가 입력한 닉네임이 이미 존재하는지 확인합니다',
+      }),
+      ApiCreatedResponse({
+        type: ValidateNicknameResponseDto,
+      })
     );
   },
   login(summary: string) {

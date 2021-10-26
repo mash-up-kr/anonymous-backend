@@ -8,6 +8,7 @@ import { UserService } from '../user/user.service';
 import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
+import { ValidateNicknameDto, ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
 import { MailSender } from './mail-sender';
 import { PasswordHasher } from './password-hasher';
 
@@ -71,6 +72,12 @@ export class AuthService {
       return { email, isCodeExpired: true };
     }
     return { email, isVerify: true };
+  }
+
+  async validateNickname({ nickname }: ValidateNicknameDto): Promise<ValidateNicknameResponseDto> {
+    const user = await this.userRepository.findOne({ nickname });
+    if (user) return { nickname, isUnique: false }
+    return { nickname, isUnique: true }
   }
 
   async validateUserByEmailAndPassword(
