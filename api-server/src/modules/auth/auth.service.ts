@@ -27,11 +27,11 @@ export class AuthService {
   ) {}
 
   async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
+    if (!email) throw new BadRequestException('Required value is not exists. (email)');
     const user = await this.userService.findOneByEmail(email);
     if (user) return { isUserExist: true };
 
     const verifyCode = await this.verifyCodeRepository.findOne({});
-
     if (verifyCode) {
       await this.verifyCodeRepository.remove(verifyCode);
     }
@@ -118,6 +118,9 @@ export class AuthService {
   async signup({ email, nickname, password }: SignUpDto) {
     // Throw error when email is duplicated.
     const _user = await this.userService.findOneByEmail(email);
+    if (!email || !nickname || !password) {
+      throw new BadRequestException('Required values are not exists. (email, nickname, password)');
+    }
     if (_user) {
       throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
     }
@@ -149,7 +152,7 @@ export class AuthService {
     userId: number,
     { newPassword }: UpdatePasswordDto
   ): Promise<UpdatePasswordResponseDto> {
-    if (!newPassword) throw new BadRequestException('not found newPassword');
+    if (!newPassword) throw new BadRequestException('Required value is not exists. (newPassword)');
     const user = await this.userService.findOneById(userId);
     user.password = await this.passwordHasher.hash(newPassword);
     this.userRepository.save(user);
