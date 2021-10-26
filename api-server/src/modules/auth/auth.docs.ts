@@ -4,6 +4,7 @@ import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { SendEmailResponseDto } from './dto/send-email.dto';
 import { ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
+import { UpdatePasswordResponseDto } from './dto/update-password.dto';
 import { AuthController } from './auth.controller';
 
 export const docs: SwaggerMethodDoc<AuthController> = {
@@ -68,6 +69,17 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       ApiOperation({
         summary,
       }),
+    );
+  },
+  updatePassword(summary: string) {
+    return applyDecorators(
+      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiOperation({
+        summary,
+      }),
+      ApiCreatedResponse({
+        type: UpdatePasswordResponseDto,
+      })
     );
   },
 };

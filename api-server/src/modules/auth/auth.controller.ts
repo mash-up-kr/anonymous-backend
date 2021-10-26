@@ -12,6 +12,7 @@ import { SendEmailDto } from './dto/send-email.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
 import { ValidateNicknameDto } from './dto/validate-nickname.dto';
 import { AuthorizedRequest, SignUpDto } from './dto/sign-up.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { AuthService } from './auth.service';
 import { docs } from './auth.docs';
 import { LoginAuthGuard } from './guard/login-auth.guard';
@@ -93,5 +94,12 @@ export class AuthController {
   async validateNickname(@Body() dto: ValidateNicknameDto) {
     const res = await this.authService.validateNickname(dto);
     return res;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-password')
+  @docs.updatePassword('비밀번호 업데이트')
+  async updatePassword(@Request() req: AuthorizedRequest, @Body() dto: UpdatePasswordDto) {
+    return this.authService.updatePassword(req.user.id, dto);
   }
 }

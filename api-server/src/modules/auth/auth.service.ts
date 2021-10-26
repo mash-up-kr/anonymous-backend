@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
 import { ValidateNicknameDto, ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
+import { UpdatePasswordDto, UpdatePasswordResponseDto } from './dto/update-password.dto';
 import { MailSender } from './mail-sender';
 import { PasswordHasher } from './password-hasher';
 
@@ -142,5 +143,16 @@ export class AuthService {
     const payload = { userId: id, sub: nickname };
     const newAccessToken = this.jwtService.sign(payload);
     return newAccessToken;
+  }
+
+  async updatePassword(
+    userId: number,
+    { newPassword }: UpdatePasswordDto
+  ): Promise<UpdatePasswordResponseDto> {
+    if (!newPassword) throw new BadRequestException('not found newPassword');
+    const user = await this.userService.findOneById(userId);
+    user.password = await this.passwordHasher.hash(newPassword);
+    this.userRepository.save(user);
+    return { isOk: true };
   }
 }
