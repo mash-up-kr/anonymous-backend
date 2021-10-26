@@ -13,7 +13,9 @@ import { VerifyCodeDto } from './dto/verify-code.dto';
 import { AuthorizedRequest, SignUpDto } from './dto/sign-up.dto';
 import { AuthService } from './auth.service';
 import { docs } from './auth.docs';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { LoginAuthGuard } from './guard/login-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from './guard/jwt-refresh-auth.guard';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SlackEvent } from '../slack/slack.event';
 
@@ -43,7 +45,6 @@ export class AuthController {
   @docs.verifyCode('인증코드 확인')
   async verifyCode(@Body() dto: VerifyCodeDto) {
     const res = await this.authService.verifyCode(dto);
-
     this.slackEvent.onEmailVerified({
       email: dto.email,
       verified: res.isVerify,
@@ -51,11 +52,19 @@ export class AuthController {
     return res;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(LoginAuthGuard)
   @Post('login')
   @docs.login('로그인')
   async login(@Request() req: AuthorizedRequest) {
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(JwtRefreshAuthGuard)
+  @Get('token-refresh')
+  @docs.refreshToken('토큰 리프레시')
+  async refreshToken(@Request() req: AuthorizedRequest) {
+    const newAccessToken = await this.authService.refresh(req.user);
+    return { accessToken: newAccessToken };
   }
 
   @Post('signup')

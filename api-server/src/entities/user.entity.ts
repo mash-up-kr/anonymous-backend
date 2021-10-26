@@ -35,6 +35,9 @@ export class User {
   @Column({ default: false })
   isVerified: boolean;
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
 

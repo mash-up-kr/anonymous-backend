@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +14,8 @@ import { PasswordHasher } from './password-hasher';
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(VerifyCode)
     private verifyCodeRepository: Repository<VerifyCode>,
     private readonly userService: UserService,
@@ -76,9 +78,7 @@ export class AuthService {
     password: string,
   ): Promise<User | null> {
     const user = await this.userService.findOneByEmail(email);
-    if (user == null) {
-      return null;
-    }
+    if (!user) return null;
     if (
       await this.passwordHasher.equal({
         plain: password,
@@ -93,15 +93,24 @@ export class AuthService {
 
   async login(user: User) {
     const payload = { userName: user.nickname, sub: user.id };
+    const accessToken = await this.jwtService.sign(payload);
+    const refreshToken = await this.jwtService.sign(payload);
+    user.refreshToken = refreshToken;
+    await this.userRepository.save(user);
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken,
+      refreshToken,
     };
+  }
+
+  async logout(user: User): Promise<void> {
+    await this.userRepository.update(user, { refreshToken: '' });
   }
 
   async signup({ email, nickname, password }: SignUpDto) {
     // Throw error when email is duplicated.
     const _user = await this.userService.findOneByEmail(email);
-    if (_user == null) {
+    if (_user) {
       throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
     }
     const user = await this.userService.createUser({
@@ -109,11 +118,22 @@ export class AuthService {
       nickname,
       password: await this.passwordHasher.hash(password),
     });
-    return {
-      access_token: this.jwtService.sign({
-        userName: user.nickname,
-        sub: user.id,
-      }),
-    };
+    delete user.password;
+    return user;
+  }
+
+  async isRefreshTokenMatching(
+    refreshToken: string,
+    userId: number,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ id: userId });
+    if (user.refreshToken === refreshToken) return user;
+    throw new UnauthorizedException();
+  }
+
+  async refresh({ id, nickname }: User): Promise<any> {
+    const payload = { userId: id, sub: nickname };
+    const newAccessToken = this.jwtService.sign(payload);
+    return newAccessToken;
   }
 }
