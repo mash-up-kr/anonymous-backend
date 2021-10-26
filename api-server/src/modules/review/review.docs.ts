@@ -10,6 +10,7 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiBearerAuth(),
       ApiOperation({
         summary,
+        description: '리뷰를 작성합니다.',
       }),
       ApiCreatedResponse({
         type: Review,

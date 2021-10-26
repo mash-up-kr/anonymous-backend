@@ -1,5 +1,5 @@
 import { Hole } from '../../../entities/review.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsEnum,
@@ -15,7 +15,9 @@ export class CreateReviewDto {
   hole: Hole;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: '이제 그만 너를 놓아줄게...',
+  })
   content: string;
 
   @IsNotEmpty()
@@ -33,7 +35,7 @@ export class CreateReviewDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Number,
   })
   keywords: number[];
