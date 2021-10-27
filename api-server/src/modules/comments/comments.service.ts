@@ -79,7 +79,6 @@ export class CommentsService {
     }
 
     const comment = await this.findOne(id);
-
     if (comment.userId !== user.id) {
       throw new ForbiddenException();
     }
