@@ -36,7 +36,7 @@ export class CreateReviewDto {
   @IsArray()
   @IsNumber({}, { each: true })
   @ApiPropertyOptional({
-    type: Number,
+    example: [],
   })
   keywords: number[];
 }
