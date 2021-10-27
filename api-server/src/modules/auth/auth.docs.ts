@@ -1,11 +1,16 @@
 import { SwaggerMethodDoc } from '../../utils/types';
 import { applyDecorators } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { VerifyCodeResponseDto } from './dto/verify-code.dto';
-import { SendEmailResponseDto } from './dto/send-email.dto';
-import { ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
-import { UpdatePasswordResponseDto } from './dto/update-password.dto';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { User } from '../../entities/user.entity';
 import { AuthController } from './auth.controller';
+import {
+  SendEmailResponseDto,
+  VerifyCodeResponseDto,
+  ValidateNicknameResponseDto,
+  UpdatePasswordResponseDto,
+  LoginResponseDto,
+  LoginDto,
+} from './dto';
 
 export const docs: SwaggerMethodDoc<AuthController> = {
   sendEmail(summary: string) {
@@ -16,6 +21,7 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
       ApiCreatedResponse({
         type: SendEmailResponseDto,
+        description: '성공적으로 전송했다면 isSend: true, 이미 등록된 이메일이라면 isUserExist: true를 반환'
       }),
     );
   },
@@ -23,10 +29,11 @@ export const docs: SwaggerMethodDoc<AuthController> = {
     return applyDecorators(
       ApiOperation({
         summary,
-        description: '유저가 입력한 인증코드가 일치하는지 확인합니다.',
+        description: '유저가 입력한 인증코드가 전송한 코드와 일치하는지 확인합니다.',
       }),
       ApiCreatedResponse({
         type: VerifyCodeResponseDto,
+        description: '코드가 일치한다면 isVerify: true, 불일치한다면 isVerify: false, 만료된 코드라면 isCodeExpired: true를 반환'
       }),
     );
   },
@@ -34,7 +41,6 @@ export const docs: SwaggerMethodDoc<AuthController> = {
     return applyDecorators(
       ApiOperation({
         summary,
-        description: '유저가 입력한 닉네임이 이미 존재하는지 확인합니다',
       }),
       ApiCreatedResponse({
         type: ValidateNicknameResponseDto,
@@ -46,32 +52,46 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       ApiOperation({
         summary,
       }),
+      ApiBody({ type: LoginDto }),
+      ApiCreatedResponse({
+        type: LoginResponseDto,
+      })
     );
   },
   signup(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
+        description: '필수값은 하단 body schema탭에 명시되어 있습니다.'
       }),
+      ApiCreatedResponse({
+        type: User,
+      })
     );
   },
   getProfile(summary: string) {
     return applyDecorators(
-      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth(),
       ApiOperation({
         summary,
       }),
+      ApiCreatedResponse({
+        type: User,
+        description: 'password를 제외한 유저 정보 반환'
+      }),
+      ApiUnauthorizedResponse({ description: 'Unauthorized' })
     );
   },
   updatePassword(summary: string) {
     return applyDecorators(
-      ApiResponse({ status: 401, description: 'Unauthorized' }),
+      ApiBearerAuth(),
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
         type: UpdatePasswordResponseDto,
-      })
+      }),
+      ApiUnauthorizedResponse({ description: 'Unauthorized' })
     );
   },
 };

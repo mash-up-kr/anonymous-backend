@@ -70,14 +70,9 @@ export class AuthController {
   @Get('me')
   @docs.getProfile('내 정보 가져오기')
   async getProfile(@Request() req: AuthorizedRequest) {
-    const {
-      email,
-      nickname,
-      createdAt,
-      updatedAt,
-      id,
-    } = await this.userService.findOneById(req.user.id);
-    return { email, nickname, createdAt, updatedAt, id };
+    const user = await this.userService.findOneById(req.user.id);
+    delete user.password;
+    return user;
   }
 
   @Post('validate-nickname')
@@ -89,7 +84,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('update-password')
-  @docs.updatePassword('비밀번호 업데이트')
+  @docs.updatePassword('새 비밀번호 업데이트')
   async updatePassword(@Request() req: AuthorizedRequest, @Body() dto: UpdatePasswordDto) {
     return this.authService.updatePassword(req.user.id, dto);
   }

@@ -1,17 +1,25 @@
-import { Injectable, HttpException, HttpStatus, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import { VerifyCode } from '../../entities/verify-code.entity';
 import { UserService } from '../user/user.service';
-import { SendEmailDto, SendEmailResponseDto } from './dto/send-email.dto';
-import { SignUpDto } from './dto/sign-up.dto';
-import { VerifyCodeDto, VerifyCodeResponseDto } from './dto/verify-code.dto';
-import { ValidateNicknameDto, ValidateNicknameResponseDto } from './dto/validate-nickname.dto';
-import { UpdatePasswordDto, UpdatePasswordResponseDto } from './dto/update-password.dto';
 import { MailSender } from './mail-sender';
 import { PasswordHasher } from './password-hasher';
+import { AuthUser, JwtPayload } from './auth.types';
+import {
+  SendEmailDto,
+  SendEmailResponseDto,
+  SignUpDto,
+  VerifyCodeDto,
+  VerifyCodeResponseDto,
+  ValidateNicknameDto,
+  ValidateNicknameResponseDto,
+  UpdatePasswordDto,
+  UpdatePasswordResponseDto,
+  LoginResponseDto,
+} from './dto';
 
 @Injectable()
 export class AuthService {
@@ -27,11 +35,10 @@ export class AuthService {
   ) {}
 
   async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
-    if (!email) throw new BadRequestException('Required value is not exists. (email)');
     const user = await this.userService.findOneByEmail(email);
     if (user) return { isUserExist: true };
 
-    const verifyCode = await this.verifyCodeRepository.findOne({});
+    const verifyCode = await this.verifyCodeRepository.findOne({ email });
     if (verifyCode) {
       await this.verifyCodeRepository.remove(verifyCode);
     }
@@ -47,18 +54,16 @@ export class AuthService {
     });
 
     await this.verifyCodeRepository.save(newVerifyCode);
-
     try {
       await this.mailSender.send({
         to: email,
-        subject: '어나니머쓱 메일 인증 테스트',
+        subject: 'Appilogue 메일 인증',
         text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 30분간 유효합니다.`,
       });
     } catch (e) {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
-
     return { isSend: true };
   }
 
@@ -72,13 +77,16 @@ export class AuthService {
       await this.verifyCodeRepository.remove(verifyCode);
       return { email, isCodeExpired: true };
     }
+    this.verifyCodeRepository.remove(verifyCode);
     return { email, isVerify: true };
   }
 
-  async validateNickname({ nickname }: ValidateNicknameDto): Promise<ValidateNicknameResponseDto> {
+  async validateNickname(
+    { nickname }: ValidateNicknameDto
+  ): Promise<ValidateNicknameResponseDto> {
     const user = await this.userRepository.findOne({ nickname });
-    if (user) return { nickname, isUnique: false }
-    return { nickname, isUnique: true }
+    if (user) return { nickname, isUnique: false };
+    return { nickname, isUnique: true };
   }
 
   async validateUserByEmailAndPassword(
@@ -99,19 +107,15 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
-    const payload = { email: user.email, sub: user.id };
+  async login(user: AuthUser): Promise<LoginResponseDto> {
+    const payload: JwtPayload = { email: user.email, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),
     };
   }
 
   async signup({ email, nickname, password }: SignUpDto) {
-    // Throw error when email is duplicated.
     const _user = await this.userService.findOneByEmail(email);
-    if (!email || !nickname || !password) {
-      throw new BadRequestException('Required values are not exists. (email, nickname, password)');
-    }
     if (_user) {
       throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
     }
@@ -128,10 +132,7 @@ export class AuthService {
     userId: number,
     { newPassword }: UpdatePasswordDto
   ): Promise<UpdatePasswordResponseDto> {
-    if (!newPassword) throw new BadRequestException('Required value is not exists. (newPassword)');
-    const user = await this.userService.findOneById(userId);
-    user.password = await this.passwordHasher.hash(newPassword);
-    this.userRepository.save(user);
+    await this.userRepository.update(userId, { password: newPassword });
     return { isOk: true };
   }
 }
