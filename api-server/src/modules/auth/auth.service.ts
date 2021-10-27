@@ -101,18 +101,9 @@ export class AuthService {
 
   async login(user: User) {
     const payload = { userName: user.nickname, sub: user.id };
-    const accessToken = await this.jwtService.sign(payload);
-    const refreshToken = await this.jwtService.sign(payload);
-    user.refreshToken = refreshToken;
-    await this.userRepository.save(user);
     return {
-      accessToken,
-      refreshToken,
+      accessToken: this.jwtService.sign(payload),
     };
-  }
-
-  async logout(user: User): Promise<void> {
-    await this.userRepository.update(user, { refreshToken: '' });
   }
 
   async signup({ email, nickname, password }: SignUpDto) {
@@ -131,21 +122,6 @@ export class AuthService {
     });
     delete user.password;
     return user;
-  }
-
-  async isRefreshTokenMatching(
-    refreshToken: string,
-    userId: number,
-  ): Promise<User> {
-    const user = await this.userRepository.findOne({ id: userId });
-    if (user.refreshToken === refreshToken) return user;
-    throw new UnauthorizedException();
-  }
-
-  async refresh({ id, nickname }: User): Promise<any> {
-    const payload = { userId: id, sub: nickname };
-    const newAccessToken = this.jwtService.sign(payload);
-    return newAccessToken;
   }
 
   async updatePassword(

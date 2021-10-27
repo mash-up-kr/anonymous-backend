@@ -12,7 +12,6 @@ import { PasswordHasher } from './password-hasher';
 import { UserService } from '../user/user.service';
 import { MailSender } from './mail-sender';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 
 @Module({
@@ -37,7 +36,6 @@ import { LocalStrategy } from './strategy/local.strategy';
     PasswordHasher,
     LocalStrategy,
     JwtStrategy,
-    JwtRefreshStrategy,
     AuthService,
     UserService,
     MailSender,

@@ -63,14 +63,6 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
     );
   },
-  refreshToken(summary: string) {
-    return applyDecorators(
-      ApiResponse({ status: 401, description: 'Unauthorized' }),
-      ApiOperation({
-        summary,
-      }),
-    );
-  },
   updatePassword(summary: string) {
     return applyDecorators(
       ApiResponse({ status: 401, description: 'Unauthorized' }),

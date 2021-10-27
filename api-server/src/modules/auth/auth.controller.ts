@@ -17,7 +17,6 @@ import { AuthService } from './auth.service';
 import { docs } from './auth.docs';
 import { LoginAuthGuard } from './guard/login-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { JwtRefreshAuthGuard } from './guard/jwt-refresh-auth.guard';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SlackEvent } from '../slack/slack.event';
 
@@ -59,14 +58,6 @@ export class AuthController {
   @docs.login('로그인')
   async login(@Request() req: AuthorizedRequest) {
     return this.authService.login(req.user);
-  }
-
-  @UseGuards(JwtRefreshAuthGuard)
-  @Get('token-refresh')
-  @docs.refreshToken('토큰 리프레시')
-  async refreshToken(@Request() req: AuthorizedRequest) {
-    const newAccessToken = await this.authService.refresh(req.user);
-    return { accessToken: newAccessToken };
   }
 
   @Post('signup')
