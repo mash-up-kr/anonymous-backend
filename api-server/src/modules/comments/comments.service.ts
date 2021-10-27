@@ -19,12 +19,21 @@ export class CommentsService {
   async create(user: User, createCommentDto: CreateCommentDto): Promise<Comment> {
     const { reviewId, parentId, content } = createCommentDto;
 
-    const review = await this.reviewService.findOne(reviewId);
+    let review = null;
+    if (reviewId) {
+      review = await this.reviewService.findOne(reviewId);
+    }
+
+    let parent = null;
+    if (parentId) {
+      parent = await this.findOne(parentId);
+      review = await parent.review;
+    }
 
     const comment = this.commentRepository.create({
       user,
       review,
-      parentId,
+      parent,
       content,
     })
     await this.commentRepository.save(comment);
@@ -37,7 +46,7 @@ export class CommentsService {
     return await this.commentRepository.find({
       where: {
         review,
-        parentId: IsNull(),
+        parent: IsNull(),
       },
       relations: ['children'],  // 답장
     })
@@ -51,7 +60,7 @@ export class CommentsService {
     return comment;
   }
 
-  async update(user: User, id: number, updateCommentDto: UpdateCommentDto): Promise<Comment> {
+  async update(user: User, id: number, updateCommentDto: UpdateCommentDto): Promise<Comment> {    
     const { content } = updateCommentDto;
     if (!content) {
       throw new BadRequestException();
@@ -59,7 +68,7 @@ export class CommentsService {
 
     const comment = await this.findOne(id);
     
-    if (comment.user.id !== user.id) {
+    if (comment.userId !== user.id) {
       throw new ForbiddenException();
     }
 
@@ -70,7 +79,7 @@ export class CommentsService {
   async remove(user: User, id: number): Promise<RemoveCommentResponseDto> {
     const comment = await this.findOne(id);
 
-    if (comment.user.id !== user.id) {
+    if (comment.userId !== user.id) {
       throw new ForbiddenException();
     }
 

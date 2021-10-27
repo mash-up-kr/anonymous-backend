@@ -8,10 +8,13 @@ export class Comment {
     id: number;
 
     @ManyToOne(() => Review, (review) => review.comments)
-    review: Review;
+    review: Promise<Review>;
 
     @ManyToOne(() => User)
     user: User;
+
+    @RelationId((comment: Comment) => comment.user)
+    userId: number;
 
     @Column({ type: 'text' })
     content: string;
