@@ -10,10 +10,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
 import { SendEmailDto } from './dto/send-email.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
+import { ValidateNicknameDto } from './dto/validate-nickname.dto';
 import { AuthorizedRequest, SignUpDto } from './dto/sign-up.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { AuthService } from './auth.service';
 import { docs } from './auth.docs';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { LoginAuthGuard } from './guard/login-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SlackEvent } from '../slack/slack.event';
 
@@ -43,7 +46,6 @@ export class AuthController {
   @docs.verifyCode('인증코드 확인')
   async verifyCode(@Body() dto: VerifyCodeDto) {
     const res = await this.authService.verifyCode(dto);
-
     this.slackEvent.onEmailVerified({
       email: dto.email,
       verified: res.isVerify,
@@ -51,7 +53,7 @@ export class AuthController {
     return res;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(LoginAuthGuard)
   @Post('login')
   @docs.login('로그인')
   async login(@Request() req: AuthorizedRequest) {
@@ -68,13 +70,22 @@ export class AuthController {
   @Get('me')
   @docs.getProfile('내 정보 가져오기')
   async getProfile(@Request() req: AuthorizedRequest) {
-    const {
-      email,
-      nickname,
-      createdAt,
-      updatedAt,
-      id,
-    } = await this.userService.findOneById(req.user.id);
-    return { email, nickname, createdAt, updatedAt, id };
+    const user = await this.userService.findOneById(req.user.id);
+    delete user.password;
+    return user;
+  }
+
+  @Post('validate-nickname')
+  @docs.validateNickname('닉네임 중복 확인')
+  async validateNickname(@Body() dto: ValidateNicknameDto) {
+    const res = await this.authService.validateNickname(dto);
+    return res;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-password')
+  @docs.updatePassword('새 비밀번호 업데이트')
+  async updatePassword(@Request() req: AuthorizedRequest, @Body() dto: UpdatePasswordDto) {
+    return this.authService.updatePassword(req.user.id, dto);
   }
 }

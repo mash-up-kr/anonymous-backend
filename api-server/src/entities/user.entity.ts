@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -14,25 +15,32 @@ import { Review } from './review.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
+  @ApiProperty()
   id: number;
 
   @Index({ unique: true })
   @Column()
+  @ApiProperty()
   email: string;
 
   @Column()
+  @ApiProperty()
   password: string;
 
   @Column()
+  @ApiProperty()
   nickname: string;
 
   @Column({ default: null })
+  @ApiProperty()
   planetType: string;
 
   @Column({ default: null })
+  @ApiProperty()
   avatarItemType: string;
 
   @Column({ default: false })
+  @ApiProperty()
   isVerified: boolean;
 
   @OneToMany(() => Review, (review) => review.user)

@@ -1,26 +1,25 @@
-import { IsEmail } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User } from '../../../entities/user.entity';
 
 export type AuthorizedRequest = Request & { user: User };
 
 export class SignUpDto {
-  @ApiProperty({ example: 'mashup.anonymous@gmail.com' })
   @IsEmail()
+  @ApiProperty({ example: 'mashup.anonymous@gmail.com' })
   email: string;
 
+  @IsString()
   @ApiProperty()
   password: string;
 
+  @IsString()
   @ApiProperty()
   nickname: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   planetType?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   avatarTypeName?: string;
-
-  @ApiProperty()
-  isVerified: boolean;
 }

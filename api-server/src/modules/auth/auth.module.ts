@@ -9,9 +9,10 @@ import { VerifyCode } from '../../entities/verify-code.entity';
 import { User } from '../../entities/user.entity';
 import { UserModule } from '../user/user.module';
 import { PasswordHasher } from './password-hasher';
-import { JwtStrategy } from './jwt.strategy';
 import { UserService } from '../user/user.service';
 import { MailSender } from './mail-sender';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { LocalStrategy } from './strategy/local.strategy';
 
 @Module({
   imports: [
@@ -32,9 +33,10 @@ import { MailSender } from './mail-sender';
   ],
   controllers: [AuthController],
   providers: [
-    AuthService,
     PasswordHasher,
+    LocalStrategy,
     JwtStrategy,
+    AuthService,
     UserService,
     MailSender,
   ],

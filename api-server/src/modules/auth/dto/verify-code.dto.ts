@@ -15,14 +15,9 @@ export class VerifyCodeResponseDto {
   @ApiProperty({ example: 'mashup.anonymous@gmail.com' })
   email: string;
 
-  @ApiPropertyOptional({
-    default: false,
-    description: 'Optional. 만료된 코드면 true',
-  })
+  @ApiPropertyOptional()
   isCodeExpired?: boolean;
 
-  @ApiPropertyOptional({
-    description: 'Optional. 코드 일치 여부',
-  })
+  @ApiPropertyOptional()
   isVerify?: boolean;
 }
