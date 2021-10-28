@@ -13,6 +13,7 @@ async function bootstrap() {
     .setTitle('Appilogue API docs')
     .setDescription('어나니머쓱팀 프로젝트 Appilogue API 문서')
     .setVersion('0.0.1')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

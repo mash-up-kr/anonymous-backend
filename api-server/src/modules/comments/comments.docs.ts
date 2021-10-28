@@ -1,5 +1,5 @@
 import { applyDecorators } from "@nestjs/common";
-import { ApiOperation, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { SwaggerMethodDoc } from "src/utils/types";
 import { CommentsController } from "./comments.controller";
 
@@ -10,6 +10,7 @@ export const docs: SwaggerMethodDoc<CommentsController> = {
                 summary,
             }),
             ApiUnauthorizedResponse(),
+            ApiBearerAuth(),
         );
     },
     findAll(summary: string) {
@@ -25,6 +26,7 @@ export const docs: SwaggerMethodDoc<CommentsController> = {
                 summary,
             }),
             ApiUnauthorizedResponse(),
+            ApiBearerAuth(),
         );
     },
     remove(summary: string) {
@@ -33,6 +35,7 @@ export const docs: SwaggerMethodDoc<CommentsController> = {
                 summary,
             }),
             ApiUnauthorizedResponse(),
+            ApiBearerAuth(),
         );
     },
 };
