@@ -132,7 +132,10 @@ export class AuthService {
     userId: number,
     { newPassword }: UpdatePasswordDto
   ): Promise<UpdatePasswordResponseDto> {
-    await this.userRepository.update(userId, { password: newPassword });
+    await this.userRepository.update(
+      userId,
+      { password: await this.passwordHasher.hash(newPassword)},
+    );
     return { isOk: true };
   }
 }
