@@ -23,6 +23,7 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post()
+  @docs.create('리뷰 생성')
   @UseGuards(JwtAuthGuard)
   @docs.create('리뷰 생성')
   async create(
