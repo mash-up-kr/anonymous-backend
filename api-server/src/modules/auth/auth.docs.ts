@@ -77,7 +77,7 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
       ApiCreatedResponse({
         type: User,
-        description: 'password를 제외한 유저 정보 반환'
+        description: 'password를 제외한 유저 정보를 조회합니다.'
       }),
       ApiUnauthorizedResponse({ description: 'Unauthorized' })
     );

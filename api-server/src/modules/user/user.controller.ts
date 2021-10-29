@@ -19,7 +19,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @docs.getAllUser('유저 목록을 조회합니다')
+  @docs.getAllUser('유저 목록 조회')
   async getAllUser() {
     const users = await this.userService.findAll();
     return users.map(({ password, ...user }) => {
@@ -29,7 +29,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @docs.getUser('아이디로 유저를 조회합니다.')
+  @docs.getUser('단일 유저 조회')
   async getUser(@Param('id') id: number) {
     const user = await this.userService.findOneById(id);
     delete user.password;
@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @Post()
-  @docs.createUser('유저를 생성합니다.')
+  @docs.createUser('유저 생성')
   async createUser(@Body() dto: CreateUserDto) {
     const user = await this.userService.createUser(dto);
     delete user.password;
@@ -45,7 +45,7 @@ export class UserController {
   }
 
   @Put(':id')
-  @docs.updateUser('유저를 수정합니다.')
+  @docs.updateUser('유저 정보 수정')
   async updateUser(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     const user = await this.userService.findAndUpdate(id, dto);
     delete user.password;
@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @docs.deleteUser('유저를 삭제합니다.')
+  @docs.deleteUser('유저 삭제')
   async deleteUser(@Param('id') id: number) {
     return this.userService.deleteUserById(id);
   }
