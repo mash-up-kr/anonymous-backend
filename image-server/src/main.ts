@@ -6,7 +6,7 @@ import { API_PREFIX, DOC_PATH } from './constants';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix(API_PREFIX);
 
   const config = new DocumentBuilder()
