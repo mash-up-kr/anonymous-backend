@@ -7,19 +7,19 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
-@ApiTags('댓글')
+@ApiTags('comments')
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @docs.create('댓글 달기')
+  @docs.create('댓글 생성')
   @Post()
   @UseGuards(JwtAuthGuard)
   create(@Request() req: AuthorizedRequest, @Body() createCommentDto: CreateCommentDto) {
     return this.commentsService.create(req.user, createCommentDto);
   }
 
-  @docs.findAll('댓글 보기')
+  @docs.findAll('댓글 목록 조회')
   @Get(':review_id')
   findAll(@Param('review_id', ParseIntPipe) id: number) {
     return this.commentsService.findAll(id);
