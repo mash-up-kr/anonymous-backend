@@ -14,6 +14,7 @@ import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { KeywordModule } from './modules/keyword/keyword.module';
 import { ReviewModule } from './modules/review/review.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ReviewModule } from './modules/review/review.module';
     SlackModule,
     ReviewModule,
     KeywordModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

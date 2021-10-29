@@ -6,9 +6,11 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from './comment.entity';
 import { Keyword } from './keyword.entity';
 import { User } from './user.entity';
 
@@ -39,6 +41,9 @@ export class Review {
 
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
+
+  @OneToMany(() => Comment, (comment) => comment.review)
+  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;
