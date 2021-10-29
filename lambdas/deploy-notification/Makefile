@@ -1,3 +1,5 @@
+prepare:
+	npm ci
 build:
 	npm run build
 package:
@@ -11,6 +13,9 @@ deploy:
 		--function-name ECSDeploymentNotification \
 		--s3-bucket $(BUCKET_PRIVATE) \
 		--s3-key lambda/ecs-deploy-notification.zip --publish
+clean:
+	rm ./lambda.zip
+	npm ci
 
-all: build package deploy
+all: prelare build package deploy clean
 	@echo "Done"

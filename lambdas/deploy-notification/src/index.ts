@@ -53,7 +53,7 @@ function buildDeployMessage({ desiredStatus, lastStatus, group, taskDefinitionAr
   return section(
     color,
     `
-*${desiredStatus === ServiceStatus.RUNNING ? 'START' : 'STOP'}* \`${group}\` - current: *${lastStatus}*
+*${desiredStatus === ServiceStatus.RUNNING ? 'NEW' : 'OLD'}* \`${group}\` - current: *${lastStatus}*
     `.trim(),
     `https://github.com/mash-up-kr/anonymous-backend/commit/${hash}`
   );
