@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiCreatedResponse } from '@nestjs/swagger';
-import { SwaggerMethodDoc } from 'src/utils/types';
+import { SwaggerMethodDoc } from '../../utils/types';
 import { User } from '../../entities/user.entity';
 import { DeleteUserResponseDto } from './dto/delete-user.dto';
 import { UserController } from './user.controller';
@@ -13,7 +13,7 @@ export const docs: SwaggerMethodDoc<UserController> = {
       }),
       ApiCreatedResponse({
         type: [User],
-    }),
+      }),
     );
   },
   getUser(summary: string) {
