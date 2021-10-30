@@ -15,6 +15,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { KeywordModule } from './modules/keyword/keyword.module';
 import { ReviewModule } from './modules/review/review.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { AbuseReportModule } from './modules/abusereport/abusereport.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     ReviewModule,
     KeywordModule,
     CommentsModule,
+    AbuseReportModule
   ],
   controllers: [AppController],
   providers: [AppService],

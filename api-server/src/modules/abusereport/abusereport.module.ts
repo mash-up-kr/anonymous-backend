@@ -9,4 +9,4 @@ import { AbuseReport } from 'src/entities/abusereport.entity';
   controllers: [AbusereportController],
   providers: [AbusereportService],
 })
-export class ReviewModule {}
+export class AbuseReportModule {}
