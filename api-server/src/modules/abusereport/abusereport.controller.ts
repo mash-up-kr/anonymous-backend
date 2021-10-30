@@ -55,7 +55,7 @@ export class AbusereportController {
   }
 
   @Delete(':id')
-  @docs.update('신고 삭제')
+  @docs.remove('신고 삭제')
   async remove(@Param('id') id: string) {
     return await this.abusereportService.remove(+id);
   }
