@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AbuseReport } from './abusereport.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
 
@@ -45,6 +46,9 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  @OneToMany(() => AbuseReport, (abusereport) => abusereport.user)
+  abusereports: AbuseReport[];
 
   @OneToMany(() => Hit, (hit) => hit.user)
   hits: Hit[];
