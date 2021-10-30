@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -9,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 import { AbuseReport } from './abusereport.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
@@ -25,7 +25,7 @@ export class User {
   email: string;
 
   @Column()
-  @ApiProperty()
+  @ApiHideProperty()
   password: string;
 
   @Column()
