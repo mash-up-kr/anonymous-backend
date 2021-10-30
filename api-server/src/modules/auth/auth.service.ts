@@ -39,6 +39,7 @@ export class AuthService {
     if (user) return { isUserExist: true };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
+
     if (verifyCode) {
       await this.verifyCodeRepository.remove(verifyCode);
     }
@@ -47,13 +48,15 @@ export class AuthService {
       return Math.floor(Math.random() * 1000000 - 1)
         .toString()
         .padStart(6, '0');
-    }
+    };
+
     const newVerifyCode = this.verifyCodeRepository.create({
       code: generateCode(),
       email,
     });
 
     await this.verifyCodeRepository.save(newVerifyCode);
+
     try {
       await this.mailSender.send({
         to: email,
@@ -64,6 +67,7 @@ export class AuthService {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
+
     return { isSend: true };
   }
 
@@ -81,9 +85,9 @@ export class AuthService {
     return { email, isVerify: true };
   }
 
-  async validateNickname(
-    { nickname }: ValidateNicknameDto
-  ): Promise<ValidateNicknameResponseDto> {
+  async validateNickname({
+    nickname,
+  }: ValidateNicknameDto): Promise<ValidateNicknameResponseDto> {
     const user = await this.userRepository.findOne({ nickname });
     if (user) return { nickname, isUnique: false };
     return { nickname, isUnique: true };
@@ -117,7 +121,10 @@ export class AuthService {
   async signup({ email, nickname, password }: SignUpDto) {
     const _user = await this.userService.findOneByEmail(email);
     if (_user) {
-      throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Email ${email} is already exist`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const user = await this.userService.createUser({
       email,
@@ -130,12 +137,11 @@ export class AuthService {
 
   async updatePassword(
     userId: number,
-    { newPassword }: UpdatePasswordDto
+    { newPassword }: UpdatePasswordDto,
   ): Promise<UpdatePasswordResponseDto> {
-    await this.userRepository.update(
-      userId,
-      { password: await this.passwordHasher.hash(newPassword)},
-    );
+    await this.userRepository.update(userId, {
+      password: await this.passwordHasher.hash(newPassword),
+    });
     return { isOk: true };
   }
 }
