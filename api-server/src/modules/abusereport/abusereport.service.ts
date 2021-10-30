@@ -8,6 +8,7 @@ import { AbuseReport, Status} from 'src/entities/abusereport.entity';
 import { CreateAbuseReportDto } from './dto/create-abusereport.dto';
 import { ReviewService } from '../review/review.service';
 import { CommentsService } from '../comments/comments.service';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AbusereportService {
@@ -18,8 +19,11 @@ export class AbusereportService {
     private readonly commentService: CommentsService
   ) {}
 
-  async create({ type, targetId }: CreateAbuseReportDto) {
-    const abusereport = await this.abusereportRepository.create({
+  async create( user:User, createabuseReportDto:  CreateAbuseReportDto): Promise<AbuseReport> {
+    const {type,targetId} = createabuseReportDto;
+
+    const abusereport = this.abusereportRepository.create({
+      user,
       type,
       targetId
     });

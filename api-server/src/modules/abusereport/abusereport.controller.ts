@@ -6,13 +6,17 @@ import {
     Patch,
     Param,
     Delete,
+    UseGuards,
+    Request
   } from '@nestjs/common';
+import { AuthorizedRequest } from '../auth/dto/sign-up.dto';
 import { Status } from 'src/entities/abusereport.entity';
 import { AbusereportService } from './abusereport.service';
 import { CreateAbuseReportDto } from './dto/create-abusereport.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SlackEvent } from '../slack/slack.event';
 import { docs } from './abusereport.docs';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @Controller('abusereport')
 export class AbusereportController {
@@ -26,9 +30,10 @@ export class AbusereportController {
     }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   @docs.create('신고 생성')
-  async create(@Body() createAbuseReportDto: CreateAbuseReportDto) {
-    const res =  await this.abusereportService.create(createAbuseReportDto);
+  async create(@Request() req: AuthorizedRequest,@Body() createAbuseReportDto: CreateAbuseReportDto) {
+    const res =  await this.abusereportService.create(req.user,createAbuseReportDto);
 
     this.slackEvent.onAbuseSent({ targetId: createAbuseReportDto.targetId})
     return res;
