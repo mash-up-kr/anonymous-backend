@@ -5,12 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  RelationId
+  RelationId,
 } from 'typeorm';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum Type {
+export enum AbuseType {
   Review = 'review',
   Reply = 'comment',
 }
@@ -29,20 +29,20 @@ export class AbuseReport {
 
   @ApiProperty()
   @Column()
-  targetId :number;
+  targetId: number;
 
   @ApiProperty()
   @Column({
     type: 'enum',
-    enum: Type,
+    enum: AbuseType,
   })
-  type: Type;
+  type: AbuseType;
 
   @ApiProperty()
   @Column({
     type: 'enum',
     enum: Status,
-    default : 'received'
+    default: 'received',
   })
   status: Status;
 

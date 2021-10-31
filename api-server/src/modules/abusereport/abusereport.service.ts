@@ -1,14 +1,11 @@
-import {
-    Injectable,
-    NotFoundException,
-  } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AbuseReport, Status} from 'src/entities/abusereport.entity';
 import { CreateAbuseReportDto } from './dto/create-abusereport.dto';
 import { ReviewService } from '../review/review.service';
 import { CommentsService } from '../comments/comments.service';
-import { User } from 'src/entities/user.entity';
+import { AbuseReport } from '../../entities/abusereport.entity';
+import { User } from '../../entities/user.entity';
 
 @Injectable()
 export class AbusereportService {
@@ -16,16 +13,19 @@ export class AbusereportService {
     @InjectRepository(AbuseReport)
     private readonly abusereportRepository: Repository<AbuseReport>,
     private readonly reviewService: ReviewService,
-    private readonly commentService: CommentsService
+    private readonly commentService: CommentsService,
   ) {}
 
-  async create( user:User, createabuseReportDto:  CreateAbuseReportDto): Promise<AbuseReport> {
-    const {type,targetId} = createabuseReportDto;
+  async create(
+    user: User,
+    createabuseReportDto: CreateAbuseReportDto,
+  ): Promise<AbuseReport> {
+    const { type, targetId } = createabuseReportDto;
 
     const abusereport = this.abusereportRepository.create({
       user,
       type,
-      targetId
+      targetId,
     });
     await this.abusereportRepository.save(abusereport);
 
@@ -41,23 +41,22 @@ export class AbusereportService {
     if (!abusereport) {
       throw new NotFoundException();
     }
-    if (abusereport.type === 'review'){
-      const review = this.reviewService.findOne(abusereport.targetId)
-      return { ...abusereport, review }
-    }
-    else if(abusereport.type === 'comment'){
-      const comment = this.commentService.findOne(abusereport.targetId)
-      return { ...abusereport, comment }
+    if (abusereport.type === 'review') {
+      const review = this.reviewService.findOne(abusereport.targetId);
+      return { ...abusereport, review };
+    } else if (abusereport.type === 'comment') {
+      const comment = this.commentService.findOne(abusereport.targetId);
+      return { ...abusereport, comment };
     }
   }
 
-  async update(id: number ,status: Status) {
+  async update(id: number, status: Status) {
     const abusereport = await this.abusereportRepository.findOne(id);
     if (!abusereport) {
       throw new NotFoundException();
     }
-    abusereport.status= status;
-    return await this.abusereportRepository.save(abusereport)
+    abusereport.status = status;
+    return await this.abusereportRepository.save(abusereport);
   }
 
   async remove(id: number): Promise<void> {

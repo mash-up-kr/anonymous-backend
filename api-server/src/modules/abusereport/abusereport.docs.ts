@@ -1,7 +1,7 @@
+import { AbuseReport } from '../../entities/abusereport.entity';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiCreatedResponse } from '@nestjs/swagger';
-import { SwaggerMethodDoc } from 'src/utils/types';
-import { AbuseReport } from 'src/entities/abusereport.entity';
+import { SwaggerMethodDoc } from '../../utils/types';
 import { AbusereportController } from './abusereport.controller';
 
 export const docs: SwaggerMethodDoc<AbusereportController> = {
@@ -12,7 +12,7 @@ export const docs: SwaggerMethodDoc<AbusereportController> = {
       }),
       ApiCreatedResponse({
         type: [AbuseReport],
-    }),
+      }),
     );
   },
   findOne(summary: string) {
@@ -56,4 +56,3 @@ export const docs: SwaggerMethodDoc<AbusereportController> = {
     );
   },
 };
-

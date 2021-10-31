@@ -1,16 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'src/entities/abusereport.entity';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+import { AbuseType } from '../../../entities/abusereport.entity';
 
 export class CreateAbuseReportDto {
   @IsNotEmpty()
-  @IsEnum(Type)
-  @ApiProperty({ enum: Type })
-  type: Type;
+  @IsEnum(AbuseType)
+  @ApiProperty({ enum: AbuseType })
+  type: AbuseType;
 
   @IsNotEmpty()
   @ApiProperty()
