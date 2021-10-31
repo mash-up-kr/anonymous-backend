@@ -11,6 +11,7 @@ import { ReviewModule } from '../review/review.module';
     ReviewModule,
   ],
   controllers: [CommentsController],
-  providers: [CommentsService]
+  providers: [CommentsService],
+  exports:[CommentsService]
 })
 export class CommentsModule {}

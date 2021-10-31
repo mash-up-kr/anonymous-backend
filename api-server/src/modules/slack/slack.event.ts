@@ -1,5 +1,5 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EmailSentEvent, EmailVerifiedEvent } from './eventTypes';
+import { EmailSentEvent, EmailVerifiedEvent , AbuseSentEvent} from './eventTypes';
 
 export class SlackEvent {
   constructor(private readonly eventEmitter: EventEmitter2) {}
@@ -10,5 +10,9 @@ export class SlackEvent {
 
   onEmailVerified(payload: EmailVerifiedEvent) {
     this.eventEmitter.emit('auth.email.verified', payload);
+  }
+
+  onAbuseSent(payload: AbuseSentEvent) {
+    this.eventEmitter.emit('abuse.sent', payload);
   }
 }

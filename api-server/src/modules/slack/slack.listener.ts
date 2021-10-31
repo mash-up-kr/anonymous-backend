@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { EmailSentEvent, EmailVerifiedEvent } from './eventTypes';
+import { EmailSentEvent, EmailVerifiedEvent , AbuseSentEvent} from './eventTypes';
 import { SlackService } from './slack.service';
 
 @Injectable()
@@ -20,6 +20,13 @@ export class SlackListener {
       `email verified ${payload.verified ? 'success' : 'failure'}: ${
         payload.email
       }`,
+    );
+  }
+
+  @OnEvent('abuse.sent')
+  handleOnAbuseSent(payload: AbuseSentEvent) {
+    this.slackService.sendPlainTextToChannel(
+      `abuse is sent: ${payload.targetId}`,
     );
   }
 }
