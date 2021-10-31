@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateAbuseReportDto } from './dto/create-abusereport.dto';
 import { ReviewService } from '../review/review.service';
 import { CommentsService } from '../comments/comments.service';
-import { AbuseReport } from '../../entities/abusereport.entity';
+import { AbuseReport, Status } from '../../entities/abusereport.entity';
 import { User } from '../../entities/user.entity';
 
 @Injectable()
