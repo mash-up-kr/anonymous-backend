@@ -61,7 +61,7 @@ export class AuthService {
       await this.mailSender.send({
         to: email,
         subject: 'Appilogue 메일 인증',
-        text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 30분간 유효합니다.`,
+        text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 10분간 유효합니다.`,
       });
     } catch (e) {
       this.verifyCodeRepository.remove(newVerifyCode);
@@ -77,7 +77,7 @@ export class AuthService {
   }: VerifyCodeDto): Promise<VerifyCodeResponseDto> {
     const verifyCode = await this.verifyCodeRepository.findOne({ email, code });
     if (!verifyCode) return { email, isVerify: false };
-    if (verifyCode.createdAt.getTime() + 1800000 < new Date().getTime()) {
+    if (verifyCode.createdAt.getTime() + 600000 < new Date().getTime()) {
       await this.verifyCodeRepository.remove(verifyCode);
       return { email, isCodeExpired: true };
     }
