@@ -14,6 +14,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from './comment.entity';
 import { Keyword } from './keyword.entity';
 import { User } from './user.entity';
+import { App } from './app.entity';
 
 export enum Hole {
   BLACK = 'black',
@@ -45,6 +46,9 @@ export class Review {
 
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
+
+  @ManyToOne(() => App, (app) => app.reviews)
+  app: App;
 
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];
