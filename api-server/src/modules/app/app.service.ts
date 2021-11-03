@@ -9,10 +9,16 @@ export class AppService {
     @InjectRepository(App) private readonly appRepository: Repository<App>,
   ) {}
 
-  /**
-   *
-   */
-  async createIfNotExist(name: string, iconUrl: string): Promise<App> {
-    return;
+  async upsert(name: string, iconUrl: string): Promise<App> {
+    let app = await this.appRepository.findOne({ where: { name } });
+    if (app == null) {
+      app = this.appRepository.create({ name });
+    }
+
+    app.iconUrl = iconUrl;
+
+    await this.appRepository.save(app);
+
+    return app;
   }
 }

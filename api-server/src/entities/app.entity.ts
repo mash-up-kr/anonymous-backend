@@ -22,9 +22,6 @@ export class App {
   @Column()
   iconUrl: string;
 
-  @Column()
-  imageUrls: string[];
-
   /**
    * Join columns
    */
