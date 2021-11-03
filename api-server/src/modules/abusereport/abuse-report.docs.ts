@@ -1,10 +1,10 @@
-import { AbuseReport } from '../../entities/abusereport.entity';
+import { AbuseReport } from '../../entities/abuse-report.entity';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiCreatedResponse } from '@nestjs/swagger';
 import { SwaggerMethodDoc } from '../../utils/types';
-import { AbusereportController } from './abusereport.controller';
+import { AbuseReportController } from './abuse-report.controller';
 
-export const docs: SwaggerMethodDoc<AbusereportController> = {
+export const docs: SwaggerMethodDoc<AbuseReportController> = {
   findAll(summary: string) {
     return applyDecorators(
       ApiOperation({

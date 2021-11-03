@@ -21,7 +21,7 @@ export enum Status {
   Done = 'done',
 }
 
-@Entity()
+@Entity({ name: 'abuse_report' })
 export class AbuseReport {
   @ApiProperty()
   @PrimaryGeneratedColumn()
@@ -50,7 +50,7 @@ export class AbuseReport {
   user: User;
 
   @ApiProperty({ type: Number })
-  @RelationId((abusereport: AbuseReport) => abusereport.user)
+  @RelationId((abuseReport: AbuseReport) => abuseReport.user)
   userId: number;
 
   @ApiProperty()

@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
-import { AbuseReport } from './abusereport.entity';
+import { AbuseReport } from './abuse-report.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
 

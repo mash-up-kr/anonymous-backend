@@ -15,7 +15,7 @@ export class SlackService {
   }
 
   private async maybeSend(
-    ...args: Parameters<typeof this.webhook.send>
+    ...args: Parameters<IncomingWebhook['send']>
   ): Promise<void> {
     if (this.webhook != null) {
       await this.webhook.send(...args);

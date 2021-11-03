@@ -10,20 +10,20 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthorizedRequest } from '../auth/dto/sign-up.dto';
-import { AbusereportService } from './abusereport.service';
-import { CreateAbuseReportDto } from './dto/create-abusereport.dto';
+import { AbuseReportService } from './abuse-report.service';
+import { CreateAbuseReportDto } from './dto/create-abuse-report.dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SlackEvent } from '../slack/slack.event';
-import { docs } from './abusereport.docs';
+import { docs } from './abuse-report.docs';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { Status } from '../../entities/abusereport.entity';
+import { Status } from '../../entities/abuse-report.entity';
 
-@Controller('abusereport')
-export class AbusereportController {
+@Controller('abuse-report')
+export class AbuseReportController {
   private slackEvent: SlackEvent;
 
   constructor(
-    private readonly abusereportService: AbusereportService,
+    private readonly abusereportService: AbuseReportService,
     private readonly eventEmitter: EventEmitter2,
   ) {
     this.slackEvent = new SlackEvent(this.eventEmitter);

@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Review } from './review.entity';
 
-@Entity()
+@Entity({ name: 'app' })
 export class App {
   @PrimaryGeneratedColumn()
   id: number;
