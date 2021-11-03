@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { RootController } from './root.controller';
+import { RootService } from './root.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './core/config/database.config';
 import slackConfig from './core/config/slack.config';
@@ -16,6 +16,7 @@ import { KeywordModule } from './modules/keyword/keyword.module';
 import { ReviewModule } from './modules/review/review.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { AbuseReportModule } from './modules/abusereport/abusereport.module';
+import { AppModule } from './modules/app/app.module';
 
 @Module({
   imports: [
@@ -35,9 +36,10 @@ import { AbuseReportModule } from './modules/abusereport/abusereport.module';
     ReviewModule,
     KeywordModule,
     CommentsModule,
-    AbuseReportModule
+    AbuseReportModule,
+    AppModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [RootController],
+  providers: [RootService],
 })
-export class AppModule {}
+export class RootModule {}

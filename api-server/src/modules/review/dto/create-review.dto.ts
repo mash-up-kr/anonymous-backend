@@ -18,6 +18,18 @@ export class CreateReviewDto {
   @ApiProperty()
   content: string;
 
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'name of the app',
+  })
+  appName: string;
+
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'url of the app icon, e.g. https://awesome-app-logo.png',
+  })
+  appIconUrl: string;
+
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })

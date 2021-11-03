@@ -1,5 +1,6 @@
 import { KeywordService } from '../keyword/keyword.service';
 import { Review } from '../../entities/review.entity';
+import { AppService } from '../app/app.service';
 import {
   BadRequestException,
   Injectable,
@@ -16,13 +17,23 @@ export class ReviewService {
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     private readonly keywordService: KeywordService,
+    private readonly appService: AppService,
   ) {}
 
-  async create({ hole, content, keywords }: CreateReviewDto) {
-    const review = await this.reviewRepository.create({
+  async create({
+    hole,
+    content,
+    keywords,
+    appName,
+    appIconUrl,
+  }: CreateReviewDto) {
+    const app = await this.appService.upsert(appName, appIconUrl);
+    const review = this.reviewRepository.create({
       hole,
       content,
+      app,
     });
+
     review.keywords = keywords
       ? (
           await Promise.all(
