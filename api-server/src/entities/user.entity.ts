@@ -13,14 +13,16 @@ import { AbuseReport } from './abuse-report.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
 
+export type JwtUser = Pick<User, 'id' | 'email'>;
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
-  @Index({ unique: true })
   @Column()
+  @Index({ unique: true })
   @ApiProperty()
   email: string;
 
@@ -29,6 +31,7 @@ export class User {
   password: string;
 
   @Column()
+  @Index({ unique: true })
   @ApiProperty()
   nickname: string;
 

@@ -17,6 +17,7 @@ import { ReviewModule } from './modules/review/review.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { AbuseReportModule } from './modules/abusereport/abuse-report.module';
 import { AppModule } from './modules/app/app.module';
+import { SearchModule } from './modules/search/search.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AppModule } from './modules/app/app.module';
     CommentsModule,
     AbuseReportModule,
     AppModule,
+    SearchModule,
   ],
   controllers: [RootController],
   providers: [RootService],
