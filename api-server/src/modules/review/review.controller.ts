@@ -30,7 +30,6 @@ export class ReviewController {
   ) {}
 
   @Post()
-  @docs.create('리뷰 생성')
   @UseGuards(JwtAuthGuard)
   @docs.create('리뷰 생성')
   async create(
