@@ -6,6 +6,7 @@ import { ReviewService } from './review.service';
 import { ReviewController } from './review.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
+import { LikesModule } from '../likes/likes.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UserModule } from '../user/user.module';
     KeywordModule,
     AppModule,
     UserModule,
+    LikesModule,
   ],
   controllers: [ReviewController],
   providers: [ReviewService],

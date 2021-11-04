@@ -15,6 +15,7 @@ import { Comment } from './comment.entity';
 import { Keyword } from './keyword.entity';
 import { User } from './user.entity';
 import { App } from './app.entity';
+import { ReviewLike } from './review-like.entity';
 
 export enum Hole {
   BLACK = 'black',
@@ -64,4 +65,7 @@ export class Review {
   @ApiProperty()
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => ReviewLike, (reviewLike) => reviewLike.review)
+  liked_users: ReviewLike[];
 }

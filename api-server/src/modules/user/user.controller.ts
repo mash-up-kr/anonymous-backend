@@ -6,17 +6,32 @@ import {
   Body,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { docs } from './user.docs';
 import { ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { AuthorizedRequest } from '../auth/dto';
+import { LikesService } from '../likes/likes.service';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly likesService: LikesService,
+  ) {}
+
+  @docs.getLikePosts('좋아요한 리뷰')
+  @Get('like_posts')
+  @UseGuards(JwtAuthGuard)
+  getLikePosts(@Request() req: AuthorizedRequest) {
+    return this.likesService.getLikePosts(req.user);
+  }
 
   @Get()
   @docs.getAllUser('유저 목록 조회')

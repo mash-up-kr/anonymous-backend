@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import { ReviewLike } from 'src/entities/review-like.entity';
 import { Review } from '../../entities/review.entity';
 import { SwaggerMethodDoc } from '../../utils/types';
 import { ReviewController } from './review.controller';
@@ -59,6 +60,49 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       }),
       ApiCreatedResponse({ description: 'Successfully deleted' }),
       ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    );
+  },
+  getLikedUsers(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '좋아요한 사용자 목록을 확인할 수 있습니다.',
+      }),
+    );
+  },
+  isLiked(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: '좋아요한 리뷰인지 확인합니다.',
+      }),
+      ApiBearerAuth(),
+      ApiUnauthorizedResponse(),
+      ApiOkResponse({
+        type: Boolean,
+      }),
+    );
+  },
+  like(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+      }),
+      ApiBearerAuth(),
+      ApiUnauthorizedResponse(),
+      ApiCreatedResponse({
+        type: ReviewLike,
+      })
+    );
+  },
+  unlike(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+      }),
+      ApiBearerAuth(),
+      ApiUnauthorizedResponse(),
+      ApiOkResponse(),
     );
   },
 };

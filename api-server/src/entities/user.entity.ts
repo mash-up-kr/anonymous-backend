@@ -12,6 +12,7 @@ import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 import { AbuseReport } from './abuse-report.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
+import { ReviewLike } from './review-like.entity';
 
 export type JwtUser = Pick<User, 'id' | 'email'>;
 
@@ -67,4 +68,7 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => ReviewLike, (reviewLike) => reviewLike.user)
+  like_reviews: ReviewLike[];
 }

@@ -18,6 +18,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { AbuseReportModule } from './modules/abusereport/abuse-report.module';
 import { AppModule } from './modules/app/app.module';
 import { SearchModule } from './modules/search/search.module';
+import { LikesModule } from './modules/likes/likes.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SearchModule } from './modules/search/search.module';
     AbuseReportModule,
     AppModule,
     SearchModule,
+    LikesModule,
   ],
   controllers: [RootController],
   providers: [RootService],
