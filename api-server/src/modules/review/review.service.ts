@@ -73,7 +73,9 @@ export class ReviewService {
     { hole, content, keywords }: UpdateReviewDto,
     { id: userId }: JwtUser,
   ) {
-    const review = await this.reviewRepository.findOne(id);
+    const review = await this.reviewRepository.findOne(id, {
+      relations: ['user'],
+    });
     if (!review) {
       throw new NotFoundException();
     }
@@ -96,7 +98,9 @@ export class ReviewService {
   }
 
   async remove(id: number, { id: userId }: JwtUser): Promise<void> {
-    const review = await this.reviewRepository.findOne(id);
+    const review = await this.reviewRepository.findOne(id, {
+      relations: ['user'],
+    });
     if (!review) {
       throw new NotFoundException();
     }
