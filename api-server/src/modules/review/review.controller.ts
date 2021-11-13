@@ -32,12 +32,6 @@ export class ReviewController {
     return await this.reviewService.create(createReviewDto, user);
   }
 
-  @Get()
-  @docs.findAll('리뷰 목록 조회')
-  async findAll() {
-    return await this.reviewService.findAll();
-  }
-
   @Get(':id')
   @docs.findOne('단일 리뷰 조회')
   async findOne(@Param('id') id: string) {

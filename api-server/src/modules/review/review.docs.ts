@@ -1,5 +1,10 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiUnauthorizedResponse } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Review } from '../../entities/review.entity';
 import { SwaggerMethodDoc } from '../../utils/types';
 import { ReviewController } from './review.controller';
@@ -14,28 +19,17 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiCreatedResponse({
         type: Review,
       }),
-      ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    );
-  },
-  findAll(summary: string) {
-    return applyDecorators(
-      ApiOperation({
-        summary,
-        description: '전체 리뷰 목록을 조회합니다.'
-      }),
-      ApiCreatedResponse({
-          type: [Review],
-      }),
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     );
   },
   findOne(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
-        description: 'id에 해당하는 리뷰를 조회합니다.'
+        description: 'id에 해당하는 리뷰를 조회합니다.',
       }),
       ApiCreatedResponse({
-          type: Review,
+        type: Review,
       }),
     );
   },
@@ -44,9 +38,9 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiBearerAuth(),
       ApiOperation({
         summary,
-        description: 'id에 해당하는 리뷰 내용을 수정합니다.'
+        description: 'id에 해당하는 리뷰 내용을 수정합니다.',
       }),
-      ApiUnauthorizedResponse({ description: 'Unauthorized' })
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     );
   },
   remove(summary: string) {
@@ -54,10 +48,10 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiBearerAuth(),
       ApiOperation({
         summary,
-        description: 'id에 해당하는 리뷰를 삭제합니다.'
+        description: 'id에 해당하는 리뷰를 삭제합니다.',
       }),
       ApiCreatedResponse({ description: 'Successfully deleted' }),
-      ApiUnauthorizedResponse({ description: 'Unauthorized' })
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     );
   },
 };
