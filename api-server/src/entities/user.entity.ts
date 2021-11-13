@@ -16,7 +16,7 @@ import { ReviewLike } from './review-likes.entity';
 
 export type JwtUser = Pick<User, 'id' | 'email'>;
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
@@ -27,7 +27,7 @@ export class User {
   @ApiProperty()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @ApiHideProperty()
   password: string;
 

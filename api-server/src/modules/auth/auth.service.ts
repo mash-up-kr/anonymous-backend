@@ -105,7 +105,6 @@ export class AuthService {
         hashed: user.password,
       })
     ) {
-      delete user.password;
       return user;
     }
     return null;

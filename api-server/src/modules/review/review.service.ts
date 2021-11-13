@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { JwtUser } from 'src/entities/user.entity';
+import { JwtUser, User } from 'src/entities/user.entity';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -59,12 +59,32 @@ export class ReviewService {
       throw new BadRequestException();
     }
 
-    const review = await this.reviewRepository.findOne(id, {
-      relations: ['keywords'],
-    });
+    const review = await this.reviewRepository
+      .createQueryBuilder('review')
+      .select([
+        'review',
+        'app.name',
+        'app.id',
+        'app.iconUrl',
+        'comment_user.id',
+        'comment_user.nickname',
+        'like_user.id',
+        'like_user.nickname',
+      ])
+      .leftJoin('review.app', 'app')
+      .leftJoinAndSelect('review.keywords', 'keywords')
+      .leftJoinAndSelect('review.likes', 'likes')
+      .leftJoinAndSelect('review.user', 'user')
+      .leftJoinAndSelect('review.comments', 'comments')
+      .leftJoin('comments.user', 'comment_user')
+      .leftJoin('likes.user', 'like_user')
+      .where('review.id = :id', { id })
+      .getOne();
+
     if (!review) {
       throw new NotFoundException();
     }
+
     return review;
   }
 

@@ -32,7 +32,6 @@ export class UserController {
   @docs.getUser('단일 유저 조회')
   async getUser(@Param('id') id: number) {
     const user = await this.userService.findOneById(id);
-    delete user.password;
     return user;
   }
 
@@ -40,7 +39,6 @@ export class UserController {
   @docs.createUser('유저 생성')
   async createUser(@Body() dto: CreateUserDto) {
     const user = await this.userService.createUser(dto);
-    delete user.password;
     return user;
   }
 
@@ -48,7 +46,6 @@ export class UserController {
   @docs.updateUser('유저 정보 수정')
   async updateUser(@Param('id') id: number, @Body() dto: UpdateUserDto) {
     const user = await this.userService.findAndUpdate(id, dto);
-    delete user.password;
     return user;
   }
 
