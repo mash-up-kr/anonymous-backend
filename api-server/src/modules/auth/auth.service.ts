@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -125,13 +130,22 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const user = await this.userService.createUser({
-      email,
-      nickname,
-      password: await this.passwordHasher.hash(password),
-    });
-    delete user.password;
-    return user;
+
+    try {
+      const user = await this.userService.createUser({
+        email,
+        nickname,
+        password: await this.passwordHasher.hash(password),
+      });
+      delete user.password;
+      return user;
+    } catch (e) {
+      if (e.message.includes('Duplicate entry')) {
+        throw new BadRequestException(`nickname is duplicated: '${nickname}'`);
+      } else {
+        throw e;
+      }
+    }
   }
 
   async updatePassword(
