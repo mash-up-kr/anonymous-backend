@@ -71,5 +71,4 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
-  likeReviews: any;
 }
