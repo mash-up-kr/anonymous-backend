@@ -32,6 +32,10 @@ export class User {
   password: string;
 
   @Column()
+  @ApiProperty({ default: null })
+  profileImage: string;
+
+  @Column()
   @Index({ unique: true })
   @ApiProperty()
   nickname: string;

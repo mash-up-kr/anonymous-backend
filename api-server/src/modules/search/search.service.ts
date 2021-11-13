@@ -22,6 +22,9 @@ export class SearchService {
     queryBuilder
       .select([
         'review',
+        'user.nickname',
+        'user.id',
+        'user.profileImage',
         'app.name',
         'app.id',
         'app.id',
@@ -32,6 +35,7 @@ export class SearchService {
       ])
       .orderBy('review.updated_at', 'DESC')
       .leftJoin('review.app', 'app')
+      .leftJoin('review.user', 'user')
       .leftJoin('review.likes', 'likes')
       .leftJoin('review.comments', 'comments')
       .leftJoin('likes.user', 'like_user');

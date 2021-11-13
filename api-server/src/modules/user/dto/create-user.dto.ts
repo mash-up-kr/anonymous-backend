@@ -15,6 +15,10 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty()
+  @IsString()
+  profileImage?: string;
+
+  @ApiProperty()
   planetType?: string;
 
   @ApiProperty()

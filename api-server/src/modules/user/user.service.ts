@@ -38,15 +38,10 @@ export class UserService {
     );
   }
 
-  async findAndUpdate(
-    id: number,
-    { nickname, avatarItemType, planetType }: UpdateUserDto,
-  ): Promise<User> {
+  async findAndUpdate(id: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOneById(id);
-    user.nickname = nickname;
-    user.avatarItemType = avatarItemType;
-    user.planetType = planetType;
-    return await this.usersRepository.save(user);
+    const updated = Object.assign(user, dto);
+    return await this.usersRepository.save(updated);
   }
 
   async deleteUserById(id: number): Promise<DeleteUserResponseDto> {
