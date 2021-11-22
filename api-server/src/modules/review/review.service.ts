@@ -37,7 +37,7 @@ export class ReviewService {
       user,
     });
 
-    review.keywords = keywords
+    review.hashtags = keywords
       ? (
           await Promise.all(
             keywords.map(async (id) => await this.keywordService.findOne(id)),

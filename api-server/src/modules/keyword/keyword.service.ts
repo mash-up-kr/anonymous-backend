@@ -1,4 +1,4 @@
-import { Keyword } from '../../entities/keyword.entity';
+import { Hashtag } from '../../entities/keyword.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,15 +6,15 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class KeywordService {
   constructor(
-    @InjectRepository(Keyword)
-    private readonly keywordRepository: Repository<Keyword>,
+    @InjectRepository(Hashtag)
+    private readonly keywordRepository: Repository<Hashtag>,
   ) {}
 
-  async findAll(): Promise<Keyword[]> {
+  async findAll(): Promise<Hashtag[]> {
     return this.keywordRepository.find();
   }
 
-  async findOne(id: number): Promise<Keyword> {
+  async findOne(id: number): Promise<Hashtag> {
     if (isNaN(id)) {
       return undefined;
     }
