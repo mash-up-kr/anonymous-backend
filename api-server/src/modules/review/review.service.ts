@@ -1,6 +1,3 @@
-import { HashtagService } from '../hashtag/hashtag.service';
-import { Review } from '../../entities/review.entity';
-import { AppService } from '../app/app.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -8,11 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtUser } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Review } from '../../entities/review.entity';
+import { AppService } from '../app/app.service';
+import { HashtagService } from '../hashtag/hashtag.service';
+import { UserService } from '../user/user.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { JwtUser, User } from 'src/entities/user.entity';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ReviewService {
@@ -110,7 +110,9 @@ export class ReviewService {
       hashtags: hashtags
         ? (
             await Promise.all(
-              hashtags.map(async (id) => await this.hashtagService.findOne(id)),
+              hashtags.map(
+                async (name) => await this.hashtagService.findOneByName(name),
+              ),
             )
           ).filter((v) => v)
         : undefined,
