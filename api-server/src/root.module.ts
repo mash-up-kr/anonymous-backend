@@ -12,7 +12,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { SlackModule } from './modules/slack/slack.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { KeywordModule } from './modules/keyword/keyword.module';
+import { HashtagModule } from './modules/hashtag/hashtag.module';
 import { ReviewModule } from './modules/review/review.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { AbuseReportModule } from './modules/abusereport/abuse-report.module';
@@ -35,7 +35,7 @@ import { SearchModule } from './modules/search/search.module';
     UserModule,
     SlackModule,
     ReviewModule,
-    KeywordModule,
+    HashtagModule,
     CommentsModule,
     AbuseReportModule,
     AppModule,

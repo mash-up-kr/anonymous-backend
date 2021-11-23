@@ -1,4 +1,4 @@
-import { KeywordModule } from '../keyword/keyword.module';
+import { HashtagModule } from '../hashtag/hashtag.module';
 import { Review } from '../../entities/review.entity';
 import { AppModule } from '../app/app.module';
 import { Module } from '@nestjs/common';
@@ -10,7 +10,7 @@ import { UserModule } from '../user/user.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Review]),
-    KeywordModule,
+    HashtagModule,
     AppModule,
     UserModule,
   ],

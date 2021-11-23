@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,6 +19,7 @@ export class Hashtag {
 
   @Column()
   @ApiProperty()
+  @Index({ unique: true })
   name: string;
 
   @ManyToMany(() => Review, (review) => review.hashtags)

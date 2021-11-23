@@ -1,12 +1,6 @@
-import { Hole } from '../../../entities/review.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-} from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { Hole } from '../../../entities/review.entity';
 
 export class CreateReviewDto {
   @IsNotEmpty()
@@ -32,9 +26,8 @@ export class CreateReviewDto {
 
   @IsOptional()
   @IsArray()
-  @IsNumber({}, { each: true })
   @ApiProperty({
-    type: Number,
+    type: [String],
   })
-  keywords: number[];
+  hashtags: string[];
 }

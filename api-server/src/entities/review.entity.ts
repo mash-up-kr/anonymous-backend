@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from './comment.entity';
-import { Hashtag } from './keyword.entity';
+import { Hashtag } from './hashtag.entity';
 import { User } from './user.entity';
 import { App } from './app.entity';
 import { ReviewLike } from './review-likes.entity';
