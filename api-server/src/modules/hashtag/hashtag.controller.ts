@@ -1,7 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Delete } from '@nestjs/common';
 import { HashtagService } from './hashtag.service';
 import { docs } from './hashtag.docs';
 import { ApiTags } from '@nestjs/swagger';
+import { UpsertHashtagDto } from './dto/upsert-hashtag.dto';
 
 @ApiTags('hashtag')
 @Controller('hashtag')
@@ -18,5 +19,17 @@ export class HashtagController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.hashtagService.findOne(+id);
+  }
+
+  @docs.upsert('해시태그 생성')
+  @Post()
+  upsert(@Body() upsertHashtagDto: UpsertHashtagDto,) {
+    return this.hashtagService.upsert(upsertHashtagDto);
+  }
+
+  @docs.remove('해시태그 삭제')
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.hashtagService.remove(+id);
   }
 }
