@@ -56,7 +56,7 @@ export class CommentsService {
         review,
         parent: IsNull(),
       },
-      relations: ['children'], // 답장
+      relations: ['children', 'user'], // 답장
     });
   }
 

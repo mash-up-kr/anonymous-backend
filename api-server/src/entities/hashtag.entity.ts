@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,18 +11,19 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Review } from './review.entity';
 
-@Entity()
-export class Keyword {
+@Entity('hashtag')
+export class Hashtag {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
   @Column()
   @ApiProperty()
+  @Index({ unique: true })
   name: string;
 
-  @ManyToMany(() => Review, (review) => review.keywords)
-  posts: Review[];
+  @ManyToMany(() => Review, (review) => review.hashtags)
+  reviews: Review[];
 
   @CreateDateColumn()
   @ApiProperty()

@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from './comment.entity';
-import { Keyword } from './keyword.entity';
+import { Hashtag } from './hashtag.entity';
 import { User } from './user.entity';
 import { App } from './app.entity';
 import { ReviewLike } from './review-likes.entity';
@@ -39,11 +39,11 @@ export class Review {
   })
   hole: Hole;
 
-  @ManyToMany(() => Keyword, (keyword) => keyword.posts)
+  @ManyToMany(() => Hashtag, (hashtag) => hashtag.reviews)
   @JoinTable({
-    name: 'review_keywords',
+    name: 'review_hashtags',
   })
-  keywords: Keyword[];
+  hashtags: Hashtag[];
 
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;

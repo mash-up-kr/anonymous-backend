@@ -1,6 +1,3 @@
-import { KeywordService } from '../keyword/keyword.service';
-import { Review } from '../../entities/review.entity';
-import { AppService } from '../app/app.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -8,24 +5,27 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtUser } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { Review } from '../../entities/review.entity';
+import { AppService } from '../app/app.service';
+import { HashtagService } from '../hashtag/hashtag.service';
+import { UserService } from '../user/user.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { JwtUser, User } from 'src/entities/user.entity';
-import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    private readonly keywordService: KeywordService,
+    private readonly hashtagService: HashtagService,
     private readonly appService: AppService,
     private readonly userService: UserService,
   ) {}
 
   async create(
-    { hole, content, keywords, appName, appIconUrl }: CreateReviewDto,
+    { hole, content, hashtags, appName, appIconUrl }: CreateReviewDto,
     { id: userId }: JwtUser,
   ) {
     const user = await this.userService.findOneById(userId);
@@ -37,10 +37,12 @@ export class ReviewService {
       user,
     });
 
-    review.keywords = keywords
+    review.hashtags = hashtags
       ? (
           await Promise.all(
-            keywords.map(async (id) => await this.keywordService.findOne(id)),
+            hashtags.map(
+              async (name) => await this.hashtagService.findOneByName(name),
+            ),
           )
         ).filter((v) => v)
       : [];
@@ -72,7 +74,7 @@ export class ReviewService {
         'like_user.nickname',
       ])
       .leftJoin('review.app', 'app')
-      .leftJoinAndSelect('review.keywords', 'keywords')
+      .leftJoinAndSelect('review.hashtags', 'hashtags')
       .leftJoinAndSelect('review.likes', 'likes')
       .leftJoinAndSelect('review.user', 'user')
       .leftJoinAndSelect('review.comments', 'comments')
@@ -90,7 +92,7 @@ export class ReviewService {
 
   async update(
     id: number,
-    { hole, content, keywords }: UpdateReviewDto,
+    { hole, content, hashtags }: UpdateReviewDto,
     { id: userId }: JwtUser,
   ) {
     const review = await this.reviewRepository.findOne(id);
@@ -105,10 +107,12 @@ export class ReviewService {
       ...review,
       hole,
       content,
-      keywords: keywords
+      hashtags: hashtags
         ? (
             await Promise.all(
-              keywords.map(async (id) => await this.keywordService.findOne(id)),
+              hashtags.map(
+                async (name) => await this.hashtagService.findOneByName(name),
+              ),
             )
           ).filter((v) => v)
         : undefined,

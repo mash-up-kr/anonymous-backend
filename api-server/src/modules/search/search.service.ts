@@ -37,6 +37,7 @@ export class SearchService {
       .leftJoin('review.app', 'app')
       .leftJoin('review.user', 'user')
       .leftJoin('review.likes', 'likes')
+      .leftJoin('review.hashtags', 'hashtags')
       .leftJoin('review.comments', 'comments')
       .leftJoin('likes.user', 'like_user');
 
