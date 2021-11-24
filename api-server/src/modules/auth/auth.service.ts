@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -39,6 +44,7 @@ export class AuthService {
     if (user) return { isUserExist: true };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
+
     if (verifyCode) {
       await this.verifyCodeRepository.remove(verifyCode);
     }
@@ -47,23 +53,26 @@ export class AuthService {
       return Math.floor(Math.random() * 1000000 - 1)
         .toString()
         .padStart(6, '0');
-    }
+    };
+
     const newVerifyCode = this.verifyCodeRepository.create({
       code: generateCode(),
       email,
     });
 
     await this.verifyCodeRepository.save(newVerifyCode);
+
     try {
       await this.mailSender.send({
         to: email,
         subject: 'Appilogue 메일 인증',
-        text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 30분간 유효합니다.`,
+        text: `아래의 코드를 입력해 인증을 완료해 주세요. ${newVerifyCode.code} 이 번호는 10분간 유효합니다.`,
       });
     } catch (e) {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
+
     return { isSend: true };
   }
 
@@ -73,7 +82,7 @@ export class AuthService {
   }: VerifyCodeDto): Promise<VerifyCodeResponseDto> {
     const verifyCode = await this.verifyCodeRepository.findOne({ email, code });
     if (!verifyCode) return { email, isVerify: false };
-    if (verifyCode.createdAt.getTime() + 1800000 < new Date().getTime()) {
+    if (verifyCode.createdAt.getTime() + 600000 < new Date().getTime()) {
       await this.verifyCodeRepository.remove(verifyCode);
       return { email, isCodeExpired: true };
     }
@@ -81,9 +90,9 @@ export class AuthService {
     return { email, isVerify: true };
   }
 
-  async validateNickname(
-    { nickname }: ValidateNicknameDto
-  ): Promise<ValidateNicknameResponseDto> {
+  async validateNickname({
+    nickname,
+  }: ValidateNicknameDto): Promise<ValidateNicknameResponseDto> {
     const user = await this.userRepository.findOne({ nickname });
     if (user) return { nickname, isUnique: false };
     return { nickname, isUnique: true };
@@ -101,7 +110,6 @@ export class AuthService {
         hashed: user.password,
       })
     ) {
-      delete user.password;
       return user;
     }
     return null;
@@ -117,25 +125,36 @@ export class AuthService {
   async signup({ email, nickname, password }: SignUpDto) {
     const _user = await this.userService.findOneByEmail(email);
     if (_user) {
-      throw new HttpException(`Email ${email} is already exist`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Email ${email} is already exist`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    const user = await this.userService.createUser({
-      email,
-      nickname,
-      password: await this.passwordHasher.hash(password),
-    });
-    delete user.password;
-    return user;
+
+    try {
+      const user = await this.userService.createUser({
+        email,
+        nickname,
+        password: await this.passwordHasher.hash(password),
+      });
+      delete user.password;
+      return user;
+    } catch (e) {
+      if (e.message.includes('Duplicate entry')) {
+        throw new BadRequestException(`nickname is duplicated: '${nickname}'`);
+      } else {
+        throw e;
+      }
+    }
   }
 
   async updatePassword(
     userId: number,
-    { newPassword }: UpdatePasswordDto
+    { newPassword }: UpdatePasswordDto,
   ): Promise<UpdatePasswordResponseDto> {
-    await this.userRepository.update(
-      userId,
-      { password: await this.passwordHasher.hash(newPassword)},
-    );
+    await this.userRepository.update(userId, {
+      password: await this.passwordHasher.hash(newPassword),
+    });
     return { isOk: true };
   }
 }

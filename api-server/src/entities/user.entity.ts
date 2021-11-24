@@ -9,26 +9,34 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
-import { AbuseReport } from './abusereport.entity';
+import { AbuseReport } from './abuse-report.entity';
 import { Hit } from './hit.entity';
 import { Review } from './review.entity';
+import { ReviewLike } from './review-likes.entity';
 
-@Entity()
+export type JwtUser = Pick<User, 'id' | 'email'>;
+
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   @ApiProperty()
   id: number;
 
-  @Index({ unique: true })
   @Column()
+  @Index({ unique: true })
   @ApiProperty()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @ApiHideProperty()
   password: string;
 
   @Column()
+  @ApiProperty({ default: null })
+  profileImage: string;
+
+  @Column()
+  @Index({ unique: true })
   @ApiProperty()
   nickname: string;
 
@@ -52,6 +60,9 @@ export class User {
 
   @OneToMany(() => Hit, (hit) => hit.user)
   hits: Hit[];
+
+  @OneToMany(() => ReviewLike, (reviewLike) => reviewLike.user)
+  reviewLikes: ReviewLike[];
 
   /**
    * Timestamp

@@ -1,6 +1,11 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { RemoveCommentResponseDto } from './dto/remove-comment.dto';
@@ -16,7 +21,10 @@ export class CommentsService {
     private readonly reviewService: ReviewService,
   ) {}
 
-  async create(user: User, createCommentDto: CreateCommentDto): Promise<Comment> {
+  async create(
+    user: User,
+    createCommentDto: CreateCommentDto,
+  ): Promise<Comment> {
     const { reviewId, parentId, content } = createCommentDto;
 
     let review = null;
@@ -35,7 +43,7 @@ export class CommentsService {
       review,
       parent,
       content,
-    })
+    });
     await this.commentRepository.save(comment);
     return comment;
   }
@@ -48,8 +56,8 @@ export class CommentsService {
         review,
         parent: IsNull(),
       },
-      relations: ['children'],  // 답장
-    })
+      relations: ['children'], // 답장
+    });
   }
 
   findOne(id: number): Promise<Comment> {
@@ -60,14 +68,18 @@ export class CommentsService {
     return comment;
   }
 
-  async update(user: User, id: number, updateCommentDto: UpdateCommentDto): Promise<Comment> {    
+  async update(
+    user: User,
+    id: number,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<Comment> {
     const { content } = updateCommentDto;
     if (!content) {
       throw new BadRequestException();
     }
 
     const comment = await this.findOne(id);
-    
+
     if (comment.userId !== user.id) {
       throw new ForbiddenException();
     }

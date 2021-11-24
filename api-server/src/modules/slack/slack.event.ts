@@ -1,5 +1,9 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EmailSentEvent, EmailVerifiedEvent , AbuseSentEvent} from './eventTypes';
+import {
+  EmailSentEvent,
+  EmailVerifiedEvent,
+  AbuseSentEvent,
+} from './eventTypes';
 
 export class SlackEvent {
   constructor(private readonly eventEmitter: EventEmitter2) {}

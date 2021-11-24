@@ -85,7 +85,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('update-password')
   @docs.updatePassword('새 비밀번호 업데이트')
-  async updatePassword(@Request() req: AuthorizedRequest, @Body() dto: UpdatePasswordDto) {
+  async updatePassword(
+    @Request() req: AuthorizedRequest,
+    @Body() dto: UpdatePasswordDto,
+  ) {
     return this.authService.updatePassword(req.user.id, dto);
   }
 }

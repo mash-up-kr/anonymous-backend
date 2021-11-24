@@ -14,7 +14,7 @@ export class UserService {
   ) {}
 
   async createUser(data: CreateUserDto): Promise<User> {
-    const user = await this.usersRepository.create(data);
+    const user = this.usersRepository.create(data);
     return await this.usersRepository.save(user);
   }
 
@@ -32,18 +32,16 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return await this.usersRepository.findOne({ email });
+    return await this.usersRepository.findOne(
+      { email },
+      { select: ['password', 'email', 'id', 'nickname'] },
+    );
   }
 
-  async findAndUpdate(
-    id: number,
-    { nickname, avatarItemType, planetType }: UpdateUserDto,
-  ): Promise<User> {
+  async findAndUpdate(id: number, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOneById(id);
-    user.nickname = nickname;
-    user.avatarItemType = avatarItemType;
-    user.planetType = planetType;
-    return await this.usersRepository.save(user);
+    const updated = Object.assign(user, dto);
+    return await this.usersRepository.save(updated);
   }
 
   async deleteUserById(id: number): Promise<DeleteUserResponseDto> {

@@ -1,58 +1,57 @@
+import { AbuseReport } from '../../entities/abuse-report.entity';
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiCreatedResponse } from '@nestjs/swagger';
 import { SwaggerMethodDoc } from '../../utils/types';
-import { User } from '../../entities/user.entity';
-import { DeleteUserResponseDto } from './dto/delete-user.dto';
-import { UserController } from './user.controller';
+import { AbuseReportController } from './abuse-report.controller';
 
-export const docs: SwaggerMethodDoc<UserController> = {
-  getAllUser(summary: string) {
+export const docs: SwaggerMethodDoc<AbuseReportController> = {
+  findAll(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
-        type: [User],
+        type: [AbuseReport],
       }),
     );
   },
-  getUser(summary: string) {
+  findOne(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
-        type: User,
+        type: AbuseReport,
       }),
     );
   },
-  createUser(summary: string) {
+  create(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
-        type: User,
+        type: AbuseReport,
       }),
     );
   },
-  updateUser(summary: string) {
+  update(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
-        type: User,
+        type: AbuseReport,
       }),
     );
   },
-  deleteUser(summary: string) {
+  remove(summary: string) {
     return applyDecorators(
       ApiOperation({
         summary,
       }),
       ApiCreatedResponse({
-        type: DeleteUserResponseDto,
+        type: AbuseReport,
       }),
     );
   },
