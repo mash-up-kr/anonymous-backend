@@ -8,6 +8,7 @@ import {
 import { Review } from '../../entities/review.entity';
 import { SwaggerMethodDoc } from '../../utils/types';
 import { ReviewController } from './review.controller';
+import { ReviewLike } from 'src/entities/review-likes.entity';
 
 export const docs: SwaggerMethodDoc<ReviewController> = {
   create(summary: string) {
@@ -51,6 +52,30 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
         description: 'id에 해당하는 리뷰를 삭제합니다.',
       }),
       ApiCreatedResponse({ description: 'Successfully deleted' }),
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+    );
+  },
+  likeReview(summary: string) {
+    return applyDecorators(
+      ApiBearerAuth(),
+      ApiOperation({
+        summary,
+      }),
+      ApiCreatedResponse({
+        type: ReviewLike,
+      }),
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+    );
+  },
+  deletelikeReview(summary: string) {
+    return applyDecorators(
+      ApiBearerAuth(),
+      ApiOperation({
+        summary,
+      }),
+      ApiCreatedResponse({
+        type: ReviewLike,
+      }),
       ApiUnauthorizedResponse({ description: 'Unauthorized' }),
     );
   },
