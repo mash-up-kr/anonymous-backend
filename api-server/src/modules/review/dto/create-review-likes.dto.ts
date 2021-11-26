@@ -6,5 +6,5 @@ export class CreateReviewlikeDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsNumber()
-  reviewId: number;
+  reviewId : number;
 }

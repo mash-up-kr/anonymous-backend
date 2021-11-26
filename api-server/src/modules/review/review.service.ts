@@ -153,7 +153,7 @@ export class ReviewService {
       await this.reviewLikeRepository.remove(alreadyLike);
     }
     else{
-      throw new ForbiddenException(`no alreadylike`);
+      throw new ForbiddenException(`No alreadylike`);
     }
   }
 }

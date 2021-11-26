@@ -60,6 +60,7 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiBearerAuth(),
       ApiOperation({
         summary,
+        description: 'id에 해당하는 리뷰를 좋아요합니다.',
       }),
       ApiCreatedResponse({
         type: ReviewLike,
@@ -72,6 +73,7 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
       ApiBearerAuth(),
       ApiOperation({
         summary,
+        description: 'id에 해당하는 리뷰 좋아요를 취소합니다.',
       }),
       ApiCreatedResponse({
         type: ReviewLike,

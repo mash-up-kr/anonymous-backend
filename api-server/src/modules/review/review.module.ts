@@ -10,7 +10,7 @@ import { ReviewLike } from 'src/entities/review-likes.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Review,ReviewLike]),
+    TypeOrmModule.forFeature([Review,ReviewLike ]),
     HashtagModule,
     AppModule,
     UserModule,

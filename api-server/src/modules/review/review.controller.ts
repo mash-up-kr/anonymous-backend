@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  Put
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthUser } from 'src/core/decorators/auth-user.decorator';
