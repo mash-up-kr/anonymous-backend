@@ -22,4 +22,7 @@ export class SignUpDto {
 
   @ApiPropertyOptional()
   avatarTypeName?: string;
+
+  @ApiPropertyOptional()
+  profileImage?: string;
 }

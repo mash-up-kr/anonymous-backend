@@ -40,7 +40,7 @@ export class User {
   @ApiProperty()
   nickname: string;
 
-  @Column({ default: null })
+  @Column({ default: '' })
   @ApiProperty()
   planetType: string;
 
