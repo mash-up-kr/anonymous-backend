@@ -122,7 +122,7 @@ export class AuthService {
     };
   }
 
-  async signup({ email, nickname, password }: SignUpDto) {
+  async signup({ email, nickname, password, profileImage }: SignUpDto) {
     const _user = await this.userService.findOneByEmail(email);
     if (_user) {
       throw new HttpException(
@@ -136,6 +136,7 @@ export class AuthService {
         email,
         nickname,
         password: await this.passwordHasher.hash(password),
+        profileImage: profileImage ?? '',
       });
       delete user.password;
       return user;
