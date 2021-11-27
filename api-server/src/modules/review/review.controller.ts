@@ -16,6 +16,7 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { docs } from './review.docs';
 import { ReviewService } from './review.service';
+import { CreateReviewlikeDto } from './dto/create-review-likes.dto';
 
 @ApiTags('reviews')
 @Controller('review')
@@ -54,5 +55,19 @@ export class ReviewController {
   @docs.remove('리뷰 삭제')
   async remove(@Param('id') id: string, @AuthUser() user: JwtUser) {
     return await this.reviewService.remove(+id, user);
+  }
+
+  @Post('/like')
+  @UseGuards(JwtAuthGuard)
+  @docs.likeReview('리뷰 좋아요')
+  async likeReview(@Body() createReviewlikeDto: CreateReviewlikeDto, @AuthUser() user: JwtUser) {
+    return this.reviewService.likeReview(createReviewlikeDto, user);
+  }
+
+  @Delete(':id/deletelike')
+  @UseGuards(JwtAuthGuard)
+  @docs.deletelikeReview('리뷰 좋아요 취소')
+  async deletelikeReview(@Param('id') id: string, @AuthUser() user: JwtUser) {
+    return this.reviewService.deletelikeReview(+id, user);
   }
 }

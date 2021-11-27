@@ -13,12 +13,16 @@ import { HashtagService } from '../hashtag/hashtag.service';
 import { UserService } from '../user/user.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { ReviewLike } from 'src/entities/review-likes.entity';
+import { CreateReviewlikeDto } from './dto/create-review-likes.dto';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
+    @InjectRepository(ReviewLike)
+    private readonly reviewLikeRepository: Repository<ReviewLike>,
     private readonly hashtagService: HashtagService,
     private readonly appService: AppService,
     private readonly userService: UserService,
@@ -129,5 +133,27 @@ export class ReviewService {
     }
 
     await this.reviewRepository.remove(review);
+  }
+
+  async likeReview({reviewId}: CreateReviewlikeDto,{ id: userId }: JwtUser ){
+    const user = await this.userService.findOneById(userId);
+    const review = await this.reviewRepository.findOne(reviewId);
+    if (!review) {
+      throw new NotFoundException();
+    }
+    const reviewlike= this.reviewLikeRepository.create({review,user});
+    await this.reviewLikeRepository.save(reviewlike);
+  }
+
+  async deletelikeReview(id:number,{ id: userId }: JwtUser ): Promise<void>{
+    const review = await this.reviewRepository.findOne(id);
+    const user = await this.userService.findOneById(userId);
+    const alreadyLike = await this.reviewLikeRepository.findOne({review,user});
+    if (alreadyLike){
+      await this.reviewLikeRepository.remove(alreadyLike);
+    }
+    else{
+      throw new ForbiddenException(`No alreadylike`);
+    }
   }
 }

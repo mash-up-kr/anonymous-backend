@@ -6,10 +6,11 @@ import { ReviewService } from './review.service';
 import { ReviewController } from './review.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
+import { ReviewLike } from 'src/entities/review-likes.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Review]),
+    TypeOrmModule.forFeature([Review,ReviewLike ]),
     HashtagModule,
     AppModule,
     UserModule,
