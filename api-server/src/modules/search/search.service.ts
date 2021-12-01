@@ -44,8 +44,12 @@ export class SearchService {
     if (search.hole != null) {
       queryBuilder.where(`review.hole = :hole`, { hole: search.hole });
     }
+
     if (search.userId != null) {
-      queryBuilder.where(`review.user_id = :userId`, { userId: search.userId });
+      queryBuilder[search.hole != null ? 'andWhere' : 'where'](
+        `review.user_id = :userId`,
+        { userId: search.userId },
+      );
     }
 
     return paginate<Review>(queryBuilder, pagination);
