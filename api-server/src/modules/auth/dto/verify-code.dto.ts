@@ -16,8 +16,8 @@ export class VerifyCodeResponseDto {
   email: string;
 
   @ApiPropertyOptional()
-  isCodeExpired?: boolean;
+  isCodeExpired: boolean;
 
   @ApiPropertyOptional()
-  isVerify?: boolean;
+  isVerify: boolean;
 }

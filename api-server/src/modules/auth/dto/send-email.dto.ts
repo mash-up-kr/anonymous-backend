@@ -9,8 +9,8 @@ export class SendEmailDto {
 
 export class SendEmailResponseDto {
   @ApiProperty()
-  isSend?: boolean;
+  isSend: boolean;
 
   @ApiPropertyOptional()
-  isUserExist?: boolean;
+  isUserExist: boolean;
 }

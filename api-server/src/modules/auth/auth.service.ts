@@ -41,7 +41,7 @@ export class AuthService {
 
   async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
-    if (user) return { isUserExist: true };
+    if (user) return { isUserExist: true, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
@@ -72,8 +72,7 @@ export class AuthService {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
-
-    return { isSend: true };
+    return { isSend: true, isUserExist: false };
   }
 
   async verifyCode({
@@ -81,13 +80,13 @@ export class AuthService {
     code,
   }: VerifyCodeDto): Promise<VerifyCodeResponseDto> {
     const verifyCode = await this.verifyCodeRepository.findOne({ email, code });
-    if (!verifyCode) return { email, isVerify: false };
+    if (!verifyCode) return { email, isVerify: false, isCodeExpired: false };
     if (verifyCode.createdAt.getTime() + 600000 < new Date().getTime()) {
       await this.verifyCodeRepository.remove(verifyCode);
-      return { email, isCodeExpired: true };
+      return { email, isCodeExpired: true, isVerify: false };
     }
     this.verifyCodeRepository.remove(verifyCode);
-    return { email, isVerify: true };
+    return { email, isVerify: true, isCodeExpired: false };
   }
 
   async validateNickname({
