@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { RemoveCommentResponseDto } from './dto/remove-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -49,16 +49,22 @@ export class CommentsService {
   }
 
   async findAll(reviewId: number): Promise<Comment[]> {
-    const review = await this.reviewService.findOne(reviewId);
 
-    return await this.commentRepository.find({
-      where: {
-        review,
-        parent: IsNull(),
-      },
-      relations: ['children', 'user'], // 답장
-    });
+    const comment = await this.commentRepository
+      .createQueryBuilder('comments')
+      .select([
+          'comments',
+      ])
+      .leftJoinAndSelect('comments.user', 'user')
+      .leftJoinAndSelect('comments.children', 'children')
+      .where('comments.review=:reviewId',{reviewId})
+      .andWhere('comments.parentId is null')
+      .loadRelationCountAndMap('comments.childrenCount','comments.children')
+      .getMany()
+
+      return comment;
   }
+
 
   findOne(id: number): Promise<Comment> {
     const comment = this.commentRepository.findOne(id);
