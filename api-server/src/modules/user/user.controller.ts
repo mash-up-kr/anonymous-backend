@@ -2,16 +2,20 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Body,
   Param,
   Delete,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthorizedRequest } from '../auth/dto/sign-up.dto';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { docs } from './user.docs';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('user')
 @Controller('user')
@@ -42,16 +46,19 @@ export class UserController {
     return user;
   }
 
-  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Patch()
   @docs.updateUser('유저 정보 수정')
-  async updateUser(@Param('id') id: number, @Body() dto: UpdateUserDto) {
-    const user = await this.userService.findAndUpdate(id, dto);
+  async updateUser(@Request() req: AuthorizedRequest, @Body() dto: UpdateUserDto) {
+    const user = await this.userService.findAndUpdate(req.user.id, dto);
+    delete user.password;
     return user;
   }
 
-  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Delete()
   @docs.deleteUser('유저 삭제')
-  async deleteUser(@Param('id') id: number) {
-    return this.userService.deleteUserById(id);
+  async deleteUser(@Request() req: AuthorizedRequest) {
+    return this.userService.deleteUserById(req.user.id);
   }
 }
