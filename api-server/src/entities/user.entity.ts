@@ -44,12 +44,12 @@ export class User {
   @ApiProperty()
   planetType: string;
 
-  @Column({ default: null })
-  @ApiProperty()
+  @Column({ default: null, select: false })
+  @ApiHideProperty()
   avatarItemType: string;
 
-  @Column({ default: false })
-  @ApiProperty()
+  @Column({ default: false, select: false })
+  @ApiHideProperty()
   isVerified: boolean;
 
   @OneToMany(() => Review, (review) => review.user)

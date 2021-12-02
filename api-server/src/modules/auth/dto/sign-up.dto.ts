@@ -1,5 +1,5 @@
 import { IsEmail, IsString } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../../entities/user.entity';
 
 export type AuthorizedRequest = Request & { user: User };
@@ -16,13 +16,4 @@ export class SignUpDto {
   @IsString()
   @ApiProperty()
   nickname: string;
-
-  @ApiPropertyOptional()
-  planetType?: string;
-
-  @ApiPropertyOptional()
-  avatarTypeName?: string;
-
-  @ApiPropertyOptional()
-  profileImage?: string;
 }

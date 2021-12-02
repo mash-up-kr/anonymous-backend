@@ -121,7 +121,7 @@ export class AuthService {
     };
   }
 
-  async signup({ email, nickname, password, profileImage }: SignUpDto) {
+  async signup({ email, nickname, password }: SignUpDto) {
     const _user = await this.userService.findOneByEmail(email);
     if (_user) {
       throw new HttpException(
@@ -135,7 +135,6 @@ export class AuthService {
         email,
         nickname,
         password: await this.passwordHasher.hash(password),
-        profileImage: profileImage ?? '',
       });
       delete user.password;
       return user;
@@ -149,10 +148,16 @@ export class AuthService {
   }
 
   async updatePassword(
-    userId: number,
-    { newPassword }: UpdatePasswordDto,
+    { email, newPassword }: UpdatePasswordDto,
   ): Promise<UpdatePasswordResponseDto> {
-    await this.userRepository.update(userId, {
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new HttpException(
+        `Email ${email} is not exist`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.userRepository.update(user, {
       password: await this.passwordHasher.hash(newPassword),
     });
     return { isOk: true };
