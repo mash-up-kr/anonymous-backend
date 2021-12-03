@@ -74,6 +74,7 @@ export class ReviewService {
         'app.iconUrl',
         'comment_user.id',
         'comment_user.nickname',
+        'comment_user.profileImage',
         'like_user.id',
         'like_user.nickname',
       ])
