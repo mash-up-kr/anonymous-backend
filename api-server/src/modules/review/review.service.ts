@@ -123,8 +123,10 @@ export class ReviewService {
     });
   }
 
-  async remove(id: number, { id: userId }: JwtUser): Promise<void> {
-    const review = await this.reviewRepository.findOne(id);
+  async remove(id: number, { id: userId }: JwtUser): Promise<boolean> {
+    const review = await this.reviewRepository.findOne(id, {
+      relations: ['user'],
+    });
     if (!review) {
       throw new NotFoundException();
     }
@@ -132,7 +134,8 @@ export class ReviewService {
       throw new ForbiddenException(`Cannot delete other user's review`);
     }
 
-    await this.reviewRepository.remove(review);
+    const result = await this.reviewRepository.softDelete(id);
+    return result.affected === 1;
   }
 
   async likeReview({reviewId}: CreateReviewlikeDto,{ id: userId }: JwtUser ){

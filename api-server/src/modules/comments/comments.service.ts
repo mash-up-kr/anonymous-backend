@@ -103,7 +103,7 @@ export class CommentsService {
     }
 
     if (comment.userId !== user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`Cannot delete other user's comment`);
     }
 
     const result = await this.commentRepository.softDelete(id);
