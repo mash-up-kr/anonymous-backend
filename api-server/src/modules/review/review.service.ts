@@ -74,6 +74,7 @@ export class ReviewService {
         'app.iconUrl',
         'comment_user.id',
         'comment_user.nickname',
+        'comment_user.profileImage',
         'like_user.id',
         'like_user.nickname',
       ])
@@ -85,9 +86,9 @@ export class ReviewService {
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')
-      .andWhere('comments.parentId is null')
       .loadRelationCountAndMap('comments.childrenCount','comments.children')
       .where('review.id = :id', { id })
+      .andWhere('comments.parentId is null')
       .getOne();
 
     if (!review) {
