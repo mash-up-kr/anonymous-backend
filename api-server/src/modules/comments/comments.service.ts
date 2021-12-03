@@ -98,11 +98,18 @@ export class CommentsService {
   async remove(user: User, id: number): Promise<RemoveCommentResponseDto> {
     const comment = await this.findOne(id);
 
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
     if (comment.userId !== user.id) {
       throw new ForbiddenException();
     }
 
-    await this.commentRepository.remove(comment);
+    const result = await this.commentRepository.softDelete(id);
+    if (!result.affected) {
+      return { isDeleted: false };
+    }
     return { isDeleted: true };
   }
 }
