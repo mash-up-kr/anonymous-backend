@@ -39,9 +39,9 @@ export class AuthService {
     private readonly mailSender: MailSender,
   ) {}
 
-  async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
+  async sendEmail({ email, allowEmailDuplicate }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
-    if (user) return { isUserExist: true };
+    if (user && !allowEmailDuplicate) return { isUserExist: true, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
@@ -72,8 +72,7 @@ export class AuthService {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
-
-    return { isSend: true };
+    return { isSend: true, isUserExist: user !== undefined };
   }
 
   async verifyCode({
@@ -81,13 +80,13 @@ export class AuthService {
     code,
   }: VerifyCodeDto): Promise<VerifyCodeResponseDto> {
     const verifyCode = await this.verifyCodeRepository.findOne({ email, code });
-    if (!verifyCode) return { email, isVerify: false };
+    if (!verifyCode) return { email, isVerify: false, isCodeExpired: false };
     if (verifyCode.createdAt.getTime() + 600000 < new Date().getTime()) {
       await this.verifyCodeRepository.remove(verifyCode);
-      return { email, isCodeExpired: true };
+      return { email, isCodeExpired: true, isVerify: false };
     }
     this.verifyCodeRepository.remove(verifyCode);
-    return { email, isVerify: true };
+    return { email, isVerify: true, isCodeExpired: false };
   }
 
   async validateNickname({
@@ -122,7 +121,7 @@ export class AuthService {
     };
   }
 
-  async signup({ email, nickname, password, profileImage }: SignUpDto) {
+  async signup({ email, nickname, password }: SignUpDto) {
     const _user = await this.userService.findOneByEmail(email);
     if (_user) {
       throw new HttpException(
@@ -136,7 +135,6 @@ export class AuthService {
         email,
         nickname,
         password: await this.passwordHasher.hash(password),
-        profileImage: profileImage ?? '',
       });
       delete user.password;
       return user;
@@ -150,10 +148,16 @@ export class AuthService {
   }
 
   async updatePassword(
-    userId: number,
-    { newPassword }: UpdatePasswordDto,
+    { email, newPassword }: UpdatePasswordDto,
   ): Promise<UpdatePasswordResponseDto> {
-    await this.userRepository.update(userId, {
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new HttpException(
+        `Email ${email} is not exist`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.userRepository.update(user, {
       password: await this.passwordHasher.hash(newPassword),
     });
     return { isOk: true };

@@ -17,7 +17,7 @@ export const docs: SwaggerMethodDoc<AuthController> = {
     return applyDecorators(
       ApiOperation({
         summary,
-        description: '등록된 이메일로 인증코드 여섯자리를 전송합니다.',
+        description: '등록된 이메일로 인증코드 여섯자리를 전송합니다. allowEmailDuplicate가 true면 이메일 중복 검사를 하지 않습니다.',
       }),
       ApiCreatedResponse({
         type: SendEmailResponseDto,

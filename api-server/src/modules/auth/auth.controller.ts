@@ -82,13 +82,11 @@ export class AuthController {
     return res;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('update-password')
   @docs.updatePassword('새 비밀번호 업데이트')
   async updatePassword(
-    @Request() req: AuthorizedRequest,
     @Body() dto: UpdatePasswordDto,
   ) {
-    return this.authService.updatePassword(req.user.id, dto);
+    return this.authService.updatePassword(dto);
   }
 }
