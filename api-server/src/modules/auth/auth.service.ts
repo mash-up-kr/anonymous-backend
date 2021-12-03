@@ -39,9 +39,9 @@ export class AuthService {
     private readonly mailSender: MailSender,
   ) {}
 
-  async sendEmail({ email }: SendEmailDto): Promise<SendEmailResponseDto> {
+  async sendEmail({ email, allowEmailDuplicate }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
-    if (user) return { isUserExist: true, isSend: false };
+    if (user && !allowEmailDuplicate) return { isUserExist: true, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
@@ -72,7 +72,7 @@ export class AuthService {
       this.verifyCodeRepository.remove(newVerifyCode);
       throw new Error(`Error occurred while sending email: ${e}`);
     }
-    return { isSend: true, isUserExist: false };
+    return { isSend: true, isUserExist: user !== undefined };
   }
 
   async verifyCode({
