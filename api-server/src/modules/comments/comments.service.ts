@@ -57,6 +57,7 @@ export class CommentsService {
       ])
       .leftJoinAndSelect('comments.user', 'user')
       .leftJoinAndSelect('comments.children', 'children')
+      .leftJoinAndSelect('children.user', 'children_user')
       .where('comments.review=:reviewId',{reviewId})
       .andWhere('comments.parentId is null')
       .loadRelationCountAndMap('comments.childrenCount','comments.children')

@@ -30,16 +30,19 @@ export class SearchService {
         'app.id',
         'app.iconUrl',
         'likes.id',
-        'comments.id',
+        'comments',
         'like_user.id',
       ])
       .orderBy('review.updated_at', 'DESC')
       .leftJoin('review.app', 'app')
       .leftJoin('review.user', 'user')
       .leftJoin('review.likes', 'likes')
-      .leftJoin('review.hashtags', 'hashtags')
+      .leftJoinAndSelect('review.hashtags', 'hashtags')
       .leftJoin('review.comments', 'comments')
-      .leftJoin('likes.user', 'like_user');
+      .leftJoin('likes.user', 'like_user')
+      .leftJoinAndSelect('comments.children', 'children')
+      .andWhere('comments.parentId is null')
+      .loadRelationCountAndMap('comments.childrenCount','comments.children')
 
     if (search.hole != null) {
       queryBuilder.where(`review.hole = :hole`, { hole: search.hole });
