@@ -98,11 +98,18 @@ export class CommentsService {
   async remove(user: User, id: number): Promise<RemoveCommentResponseDto> {
     const comment = await this.findOne(id);
 
-    if (comment.userId !== user.id) {
-      throw new ForbiddenException();
+    if (!comment) {
+      throw new NotFoundException();
     }
 
-    await this.commentRepository.remove(comment);
+    if (comment.userId !== user.id) {
+      throw new ForbiddenException(`Cannot delete other user's comment`);
+    }
+
+    const result = await this.commentRepository.softDelete(id);
+    if (!result.affected) {
+      return { isDeleted: false };
+    }
     return { isDeleted: true };
   }
 }
