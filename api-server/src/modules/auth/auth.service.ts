@@ -42,6 +42,7 @@ export class AuthService {
   async sendEmail({ email, allowEmailDuplicate }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
     if (user && !allowEmailDuplicate) return { isUserExist: true, isSend: false };
+    if (!user && allowEmailDuplicate) return { isUserExist: false, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
