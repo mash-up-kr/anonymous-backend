@@ -5,6 +5,7 @@ import {
   UseGuards,
   Request,
   Get,
+  Patch,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
@@ -82,7 +83,7 @@ export class AuthController {
     return res;
   }
 
-  @Post('update-password')
+  @Patch('update-password')
   @docs.updatePassword('새 비밀번호 업데이트')
   async updatePassword(
     @Body() dto: UpdatePasswordDto,

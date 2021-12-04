@@ -42,6 +42,7 @@ export class AuthService {
   async sendEmail({ email, allowEmailDuplicate }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
     if (user && !allowEmailDuplicate) return { isUserExist: true, isSend: false };
+    if (!user && allowEmailDuplicate) return { isUserExist: false, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
@@ -157,9 +158,16 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const isEqual = await this.passwordHasher.equal({
+      plain: newPassword,
+      hashed: user.password,
+    })
+    if (isEqual) {
+      return { isUpdated: false }
+    }
     await this.userRepository.update(user, {
       password: await this.passwordHasher.hash(newPassword),
     });
-    return { isOk: true };
+    return { isUpdated: true };
   }
 }

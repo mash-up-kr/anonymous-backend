@@ -90,6 +90,7 @@ export const docs: SwaggerMethodDoc<AuthController> = {
       }),
       ApiCreatedResponse({
         type: UpdatePasswordResponseDto,
+        description: 'isUpdated가 true면 성공적으로 변환, false라면 이전 비밀번호와 중복됨을 의미'
       }),
       ApiUnauthorizedResponse({ description: 'Unauthorized' })
     );
