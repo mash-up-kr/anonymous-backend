@@ -14,5 +14,5 @@ export class UpdatePasswordDto {
 export class UpdatePasswordResponseDto {
   @IsBoolean()
   @ApiProperty()
-  isOk: boolean;
+  isUpdated: boolean;
 }

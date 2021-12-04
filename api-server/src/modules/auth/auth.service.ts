@@ -157,9 +157,16 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const isEqual = await this.passwordHasher.equal({
+      plain: newPassword,
+      hashed: user.password,
+    })
+    if (isEqual) {
+      return { isUpdated: false }
+    }
     await this.userRepository.update(user, {
       password: await this.passwordHasher.hash(newPassword),
     });
-    return { isOk: true };
+    return { isUpdated: true };
   }
 }
