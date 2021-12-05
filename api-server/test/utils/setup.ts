@@ -1,7 +1,7 @@
+import { AppModule } from '../../src/modules/app/app.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { loadFixtures } from './loadFixture';
 import * as request from 'supertest';
-import { AppModule } from '../../src/root.module';
 import { Connection } from 'typeorm';
 import * as assert from 'assert';
 import * as fs from 'fs';
