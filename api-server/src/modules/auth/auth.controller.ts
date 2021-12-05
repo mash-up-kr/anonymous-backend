@@ -85,9 +85,7 @@ export class AuthController {
 
   @Patch('update-password')
   @docs.updatePassword('새 비밀번호 업데이트')
-  async updatePassword(
-    @Body() dto: UpdatePasswordDto,
-  ) {
+  async updatePassword(@Body() dto: UpdatePasswordDto) {
     return this.authService.updatePassword(dto);
   }
 }
