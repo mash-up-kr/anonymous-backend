@@ -57,7 +57,7 @@ export class UploadService {
 
   private createPath(id: string, ext: ImageFormat) {
     return {
-      key: `${BUCKET_PATH_PREFIX}/${id}.png`,
+      key: `${BUCKET_PATH_PREFIX}/${id}.${ext}`,
       cdn: `https://${CDN_HOST}/${BUCKET_PATH_PREFIX}/${id}.${ext}`,
     };
   }
