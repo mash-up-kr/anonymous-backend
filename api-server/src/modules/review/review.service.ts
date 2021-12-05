@@ -86,7 +86,7 @@ export class ReviewService {
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')
-      .loadRelationCountAndMap('comments.childrenCount','comments.children')
+      .loadRelationCountAndMap('comments.childrenCount', 'comments.children')
       .where('review.id = :id', { id })
       .andWhere('comments.parentId is null')
       .getOne();
@@ -142,24 +142,26 @@ export class ReviewService {
     return result.affected === 1;
   }
 
-  async likeReview({reviewId}: CreateReviewlikeDto,{ id: userId }: JwtUser ){
+  async likeReview({ reviewId }: CreateReviewlikeDto, { id: userId }: JwtUser) {
     const user = await this.userService.findOneById(userId);
     const review = await this.reviewRepository.findOne(reviewId);
     if (!review) {
       throw new NotFoundException();
     }
-    const reviewlike= this.reviewLikeRepository.create({review,user});
+    const reviewlike = this.reviewLikeRepository.create({ review, user });
     await this.reviewLikeRepository.save(reviewlike);
   }
 
-  async deletelikeReview(id:number,{ id: userId }: JwtUser ): Promise<void>{
+  async deletelikeReview(id: number, { id: userId }: JwtUser): Promise<void> {
     const review = await this.reviewRepository.findOne(id);
     const user = await this.userService.findOneById(userId);
-    const alreadyLike = await this.reviewLikeRepository.findOne({review,user});
-    if (alreadyLike){
+    const alreadyLike = await this.reviewLikeRepository.findOne({
+      review,
+      user,
+    });
+    if (alreadyLike) {
       await this.reviewLikeRepository.remove(alreadyLike);
-    }
-    else{
+    } else {
       throw new ForbiddenException(`No alreadylike`);
     }
   }

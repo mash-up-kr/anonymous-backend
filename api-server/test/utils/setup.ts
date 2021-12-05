@@ -1,4 +1,4 @@
-import { AppModule } from '../../src/modules/app/app.module';
+import { RootModule } from '../../src/root.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { loadFixtures } from './loadFixture';
 import * as request from 'supertest';
@@ -23,7 +23,7 @@ export async function setupE2E({
   await ensureDatabaseSchemaExist(database);
 
   const moduleFixture: TestingModule = await Test.createTestingModule({
-    imports: [AppModule],
+    imports: [RootModule],
   }).compile();
 
   const app = moduleFixture.createNestApplication();

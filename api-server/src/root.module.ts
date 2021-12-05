@@ -1,3 +1,4 @@
+import { SentryInterceptor } from './core/interceptors/sentry.interceptor';
 import { Module } from '@nestjs/common';
 import { RootController } from './root.controller';
 import { RootService } from './root.service';
@@ -18,9 +19,17 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { AbuseReportModule } from './modules/abusereport/abuse-report.module';
 import { AppModule } from './modules/app/app.module';
 import { SearchModule } from './modules/search/search.module';
+import { SentryModule } from '@ntegral/nestjs-sentry';
+import { LogLevel } from '@sentry/types';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
+    SentryModule.forRoot({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV,
+      logLevel: LogLevel.Debug,
+    }),
     ConfigModule.forRoot({
       load: [databaseConfig, authConfig, slackConfig, mailConfig],
     }),
@@ -42,6 +51,12 @@ import { SearchModule } from './modules/search/search.module';
     SearchModule,
   ],
   controllers: [RootController],
-  providers: [RootService],
+  providers: [
+    RootService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: SentryInterceptor,
+    },
+  ],
 })
 export class RootModule {}
