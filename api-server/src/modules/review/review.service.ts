@@ -85,7 +85,10 @@ export class ReviewService {
       .leftJoinAndSelect('review.comments', 'comments')
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
+      .leftJoinAndSelect('comments.children', 'children')
+      .loadRelationCountAndMap('comments.childrenCount','comments.children')
       .where('review.id = :id', { id })
+      .andWhere('comments.parentId is null')
       .getOne();
 
     if (!review) {

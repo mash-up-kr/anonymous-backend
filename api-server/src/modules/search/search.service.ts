@@ -27,7 +27,6 @@ export class SearchService {
         'user.profileImage',
         'app.name',
         'app.id',
-        'app.id',
         'app.iconUrl',
         'likes.id',
         'comments',
@@ -41,8 +40,8 @@ export class SearchService {
       .leftJoin('review.comments', 'comments')
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')
-      .andWhere('comments.parentId is null')
       .loadRelationCountAndMap('comments.childrenCount','comments.children')
+      .where('comments.parentId is null')
 
     if (search.hole != null) {
       queryBuilder.where(`review.hole = :hole`, { hole: search.hole });
