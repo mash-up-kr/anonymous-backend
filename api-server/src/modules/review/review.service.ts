@@ -5,24 +5,24 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ReviewLike } from 'src/entities/review-likes.entity';
 import { JwtUser } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Hole, Review } from '../../entities/review.entity';
+import { Review } from '../../entities/review.entity';
 import { AppService } from '../app/app.service';
 import { HashtagService } from '../hashtag/hashtag.service';
 import { UserService } from '../user/user.service';
+import { CreateReviewlikeDto } from './dto/create-review-likes.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { ReviewLike } from 'src/entities/review-likes.entity';
-import { CreateReviewlikeDto } from './dto/create-review-likes.dto';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    private readonly reviewLikeRepository: Repository<ReviewLike>,
     @InjectRepository(ReviewLike)
+    private readonly reviewLikeRepository: Repository<ReviewLike>,
     private readonly hashtagService: HashtagService,
     private readonly appService: AppService,
     private readonly userService: UserService,
