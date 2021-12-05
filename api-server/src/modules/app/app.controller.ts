@@ -11,14 +11,7 @@ export class AppController {
 
   @Get('/:name')
   @docs.getOne('find an app by name')
-  async getOne(
-    @Param('name') name: string,
-    @Query('ratio') ratio?: string,
-  ): Promise<App> {
-    if (ratio) {
-      return await this.appService.findOneByNameAndCountRatio(name);
-    } else {
-      return await this.appService.findOneByName(name);
-    }
+  async getOne(@Param('name') name: string): Promise<App> {
+    return await this.appService.findOneByName(name);
   }
 }

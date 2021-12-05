@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtUser } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Review } from '../../entities/review.entity';
+import { Hole, Review } from '../../entities/review.entity';
 import { AppService } from '../app/app.service';
 import { HashtagService } from '../hashtag/hashtag.service';
 import { UserService } from '../user/user.service';
@@ -21,8 +21,8 @@ export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
-    @InjectRepository(ReviewLike)
     private readonly reviewLikeRepository: Repository<ReviewLike>,
+    @InjectRepository(ReviewLike)
     private readonly hashtagService: HashtagService,
     private readonly appService: AppService,
     private readonly userService: UserService,
@@ -51,6 +51,8 @@ export class ReviewService {
         ).filter((v) => v)
       : [];
 
+    // TODO: transaction?
+    await this.appService.updateAppReviewCount(appName, hole, 1);
     await this.reviewRepository.save(review);
 
     return review;
@@ -103,7 +105,9 @@ export class ReviewService {
     { hole, content, hashtags }: UpdateReviewDto,
     { id: userId }: JwtUser,
   ) {
-    const review = await this.reviewRepository.findOne(id);
+    const review = await this.reviewRepository.findOne(id, {
+      relations: ['app'],
+    });
     if (!review) {
       throw new NotFoundException();
     }
@@ -111,7 +115,8 @@ export class ReviewService {
       throw new ForbiddenException(`Cannot update other user's review`);
     }
 
-    return await this.reviewRepository.save({
+    // TODO: transaction?
+    const updated = await this.reviewRepository.save({
       ...review,
       hole,
       content,
@@ -125,11 +130,15 @@ export class ReviewService {
           ).filter((v) => v)
         : undefined,
     });
+
+    await this.appService.changeReviewHole(review.app.name, hole);
+
+    return updated;
   }
 
   async remove(id: number, { id: userId }: JwtUser): Promise<boolean> {
     const review = await this.reviewRepository.findOne(id, {
-      relations: ['user'],
+      relations: ['user', 'app'],
     });
     if (!review) {
       throw new NotFoundException();
@@ -138,7 +147,13 @@ export class ReviewService {
       throw new ForbiddenException(`Cannot delete other user's review`);
     }
 
+    // TODO: transaction?
     const result = await this.reviewRepository.softDelete(id);
+    await this.appService.updateAppReviewCount(
+      review.app.name,
+      review.hole,
+      -1,
+    );
     return result.affected === 1;
   }
 

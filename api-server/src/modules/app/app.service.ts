@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { groupBy } from 'ramda';
+import { Hole } from 'src/entities/review.entity';
 import { Repository } from 'typeorm';
 import { App } from '../../entities/app.entity';
 
@@ -24,32 +25,46 @@ export class AppService {
   }
 
   async findOneByName(name: string): Promise<App> {
-    const app = await this.appRepository.findOne(
-      { name },
-      { relations: ['reviews'] },
-    );
+    const app = await this.appRepository.findOne({ name });
     if (app == null) {
       throw new NotFoundException();
     }
     return app;
   }
 
-  async findOneByNameAndCountRatio(name: string): Promise<App> {
-    // TODO, change app entity to have review_count field(INT) and aggregate
-    // every review
-    const app = await this.findOneByName(name);
-    const ratio = {
-      black: 0,
-      white: 0,
-    };
-    if (app.reviews.length > 0) {
-      const { black, white } = groupBy((review) => review.hole, app.reviews);
-      ratio.black = Math.round((black.length / app.reviews.length) * 100);
-      ratio.white = Math.round((white.length / app.reviews.length) * 100);
+  async updateAppReviewCount(
+    name: string,
+    hole: Hole,
+    amount: number,
+  ): Promise<App> {
+    const app = await this.appRepository.findOne({ name });
+    if (app == null) {
+      return;
     }
 
-    app.ratio = ratio;
+    if (hole === Hole.BLACK) {
+      app.review_count_black += amount;
+    } else {
+      app.review_count_white += amount;
+    }
 
-    return app;
+    await this.appRepository.save(app);
+  }
+
+  async changeReviewHole(name: string, toHole: Hole): Promise<App> {
+    const app = await this.appRepository.findOne({ name });
+    if (app == null) {
+      return;
+    }
+
+    if (toHole === Hole.BLACK) {
+      app.review_count_white -= 1;
+      app.review_count_black += 1;
+    } else {
+      app.review_count_white += 1;
+      app.review_count_black -= 1;
+    }
+
+    await this.appRepository.save(app);
   }
 }

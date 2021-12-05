@@ -22,6 +22,12 @@ export class App {
   @Column()
   iconUrl: string;
 
+  @Column({ default: 0 })
+  review_count_white: number;
+
+  @Column({ default: 0 })
+  review_count_black: number;
+
   /**
    * Join columns
    */
@@ -39,6 +45,4 @@ export class App {
 
   @DeleteDateColumn()
   deletedAt: Date;
-
-  ratio?: { white: number; black: number };
 }
