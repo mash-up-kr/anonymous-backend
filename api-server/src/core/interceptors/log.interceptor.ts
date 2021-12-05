@@ -75,7 +75,11 @@ export class LogInterceptor implements NestInterceptor {
   }
 
   private getUser(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest();
+    if (request.user?.password != null) {
+      request.user.password = '<privacy-masked>';
+    }
+
     return request.user ?? null;
   }
 
