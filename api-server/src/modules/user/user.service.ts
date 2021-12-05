@@ -16,7 +16,7 @@ export class UserService {
   async createUser(data: CreateUserDto): Promise<User> {
     const user = this.usersRepository.create({
       ...data,
-      profileImage: 'https://cdn.moussg.io/upload/e4b3749a-8690-47bb-94c0-b77cfed0edaa.png',
+      profileImage: `https://${process.env.CDN_HOST}/upload/e4b3749a-8690-47bb-94c0-b77cfed0edaa.png`,
     });
     return await this.usersRepository.save(user);
   }
