@@ -34,6 +34,8 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.1.0",
     "@nestjs/typeorm": "^8.0.2",
+    "@ntegral/nestjs-sentry": "^3.0.6",
+    "@sentry/node": "^6.15.0",
     "@sindresorhus/is": "^4.2.0",
     "@slack/webhook": "^6.0.0",
     "@types/swagger-ui-express": "^4.1.3",
