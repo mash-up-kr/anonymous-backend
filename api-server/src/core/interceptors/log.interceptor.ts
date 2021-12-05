@@ -76,11 +76,14 @@ export class LogInterceptor implements NestInterceptor {
 
   private getUser(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    if (request.user?.password != null) {
-      request.user.password = '<privacy-masked>';
+    if (request.user == null || typeof request.user !== 'object') {
+      return null;
     }
 
-    return request.user ?? null;
+    const user = { ...request.user };
+    delete user.password;
+
+    return user;
   }
 
   private isIgnorePath(context: ExecutionContext): boolean {
@@ -89,3 +92,5 @@ export class LogInterceptor implements NestInterceptor {
     );
   }
 }
+
+/executionId":"(?<executionId>.*?)"/;
