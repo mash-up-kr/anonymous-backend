@@ -39,4 +39,6 @@ export class App {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  ratio?: { white: number; black: number };
 }
