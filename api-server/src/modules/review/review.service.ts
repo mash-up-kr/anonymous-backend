@@ -14,6 +14,7 @@ import { HashtagService } from '../hashtag/hashtag.service';
 import { UserService } from '../user/user.service';
 import { CreateReviewlikeDto } from './dto/create-review-likes.dto';
 import { CreateReviewDto } from './dto/create-review.dto';
+import { ReviewResponseDto } from './dto/review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
@@ -62,7 +63,7 @@ export class ReviewService {
     return this.reviewRepository.find();
   }
 
-  async findOne(id: number): Promise<Review> {
+  async findOne(id: number): Promise<ReviewResponseDto> {
     if (isNaN(id)) {
       throw new BadRequestException();
     }
@@ -97,7 +98,10 @@ export class ReviewService {
       throw new NotFoundException();
     }
 
-    return review;
+    return {
+      ...review,
+      blocked: review.abuseCount >= 5,
+    };
   }
 
   async update(

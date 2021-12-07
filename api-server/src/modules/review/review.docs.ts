@@ -9,6 +9,7 @@ import { Review } from '../../entities/review.entity';
 import { SwaggerMethodDoc } from '../../utils/types';
 import { ReviewController } from './review.controller';
 import { ReviewLike } from 'src/entities/review-likes.entity';
+import { ReviewResponseDto } from './dto/review.dto';
 
 export const docs: SwaggerMethodDoc<ReviewController> = {
   create(summary: string) {
@@ -30,7 +31,7 @@ export const docs: SwaggerMethodDoc<ReviewController> = {
         description: 'id에 해당하는 리뷰를 조회합니다.',
       }),
       ApiCreatedResponse({
-        type: Review,
+        type: ReviewResponseDto,
       }),
     );
   },
