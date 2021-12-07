@@ -10,6 +10,7 @@ import { Hole, Review } from 'src/entities/review.entity';
 import { SearchService } from './search.service';
 import { docs } from './search.docs';
 import { ApiTags } from '@nestjs/swagger';
+import { App } from 'src/entities/app.entity';
 
 @ApiTags('search')
 @Controller('search')
@@ -28,5 +29,11 @@ export class SearchController {
       { page, limit },
       { userId, hole },
     );
+  }
+
+  @Get('app')
+  @docs.searchApp('App 검색 API')
+  async searchApp(@Query('q') query: string): Promise<Pagination<App>> {
+    return await this.searchService.searchApp(query);
   }
 }

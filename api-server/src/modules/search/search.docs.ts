@@ -32,4 +32,17 @@ export const docs: SwaggerMethodDoc<SearchController> = {
       }),
     );
   },
+  searchApp(summary: string) {
+    return applyDecorators(
+      ApiOperation({
+        summary,
+        description: 'name prefix로 app을 검색합니다.',
+      }),
+      ApiQuery({
+        name: 'q',
+        required: true,
+        description: 'name prefix',
+      }),
+    );
+  },
 };

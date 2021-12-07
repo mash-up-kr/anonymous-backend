@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
+import { App } from 'src/entities/app.entity';
 import { Hole, Review } from 'src/entities/review.entity';
 import { Repository } from 'typeorm';
+import { AppService } from '../app/app.service';
 
 interface SearchOption {
   hole?: Hole;
@@ -14,6 +20,7 @@ export class SearchService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
+    private readonly appService: AppService,
   ) {}
 
   async searchReview(pagination: IPaginationOptions, search: SearchOption) {
@@ -54,5 +61,20 @@ export class SearchService {
     }
 
     return paginate<Review>(queryBuilder, pagination);
+  }
+
+  async searchApp(query: string): Promise<Pagination<App>> {
+    const items = this.appService.searchByNameFromCache(query);
+    return {
+      items,
+      links: {},
+      meta: {
+        currentPage: 0,
+        itemCount: items.length,
+        totalItems: items.length,
+        itemsPerPage: 20,
+        totalPages: 1,
+      },
+    };
   }
 }
