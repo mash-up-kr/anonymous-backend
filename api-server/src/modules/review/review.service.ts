@@ -180,4 +180,13 @@ export class ReviewService {
       throw new ForbiddenException(`No alreadylike`);
     }
   }
+
+  async updateAbuseCount(id: number, amount: number): Promise<void> {
+    const review = await this.reviewRepository.findOne(id);
+      if (!review) return;
+
+      review.abuseCount += amount;
+
+      await this.reviewRepository.save(review);
+  }
 }

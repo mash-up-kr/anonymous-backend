@@ -68,4 +68,7 @@ export class Review {
   @ApiProperty()
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ default: 0 })
+  abuseCount: number;
 }

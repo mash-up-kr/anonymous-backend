@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateAbuseReportDto } from './dto/create-abuse-report.dto';
 import { ReviewService } from '../review/review.service';
 import { CommentsService } from '../comments/comments.service';
-import { AbuseReport, Status } from '../../entities/abuse-report.entity';
+import { AbuseReport, AbuseType, Status } from '../../entities/abuse-report.entity';
 import { User } from '../../entities/user.entity';
 
 @Injectable()
@@ -28,6 +28,12 @@ export class AbuseReportService {
       targetId,
     });
     await this.abuseReportRepository.save(abuseReport);
+
+    if (type === AbuseType.Reply) {
+      await this.commentService.updateAbuseCount(targetId, 1);
+    } else if (type === AbuseType.Review) {
+      await this.reviewService.updateAbuseCount(targetId, 1);
+    }
 
     return abuseReport;
   }
@@ -66,5 +72,11 @@ export class AbuseReportService {
     }
 
     await this.abuseReportRepository.remove(abuseReport);
+
+    if (abuseReport.type === AbuseType.Reply) {
+      await this.commentService.updateAbuseCount(abuseReport.targetId, -1);
+    } else if (abuseReport.type === AbuseType.Review) {
+      await this.reviewService.updateAbuseCount(abuseReport.targetId, -1);
+    }
   }
 }

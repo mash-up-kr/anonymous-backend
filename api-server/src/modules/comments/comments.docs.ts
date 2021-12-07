@@ -9,6 +9,7 @@ import { SwaggerMethodDoc } from '../../utils/types';
 import { Comment } from '../../entities/comment.entity';
 import { CommentsController } from './comments.controller';
 import { RemoveCommentResponseDto } from './dto/remove-comment.dto';
+import { CommentResponseDto } from './dto/comment.dto';
 
 export const docs: SwaggerMethodDoc<CommentsController> = {
   create(summary: string) {
@@ -32,7 +33,7 @@ export const docs: SwaggerMethodDoc<CommentsController> = {
         description: '특정 리뷰의 전체 댓글 목록을 조회합니다.',
       }),
       ApiCreatedResponse({
-        type: [Comment],
+        type: [CommentResponseDto],
       }),
     );
   },

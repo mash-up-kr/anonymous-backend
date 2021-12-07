@@ -12,6 +12,7 @@ import { RemoveCommentResponseDto } from './dto/remove-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from '../../entities/comment.entity';
 import { ReviewService } from '../review/review.service';
+import { CommentResponseDto } from './dto/comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -48,7 +49,7 @@ export class CommentsService {
     return comment;
   }
 
-  async findAll(reviewId: number): Promise<Comment[]> {
+  async findAll(reviewId: number): Promise<CommentResponseDto[]> {
 
     const comment = await this.commentRepository
       .createQueryBuilder('comments')
@@ -56,14 +57,38 @@ export class CommentsService {
           'comments',
       ])
       .leftJoinAndSelect('comments.user', 'user')
-      .leftJoinAndSelect('comments.children', 'children')
-      .leftJoinAndSelect('children.user', 'children_user')
       .where('comments.review=:reviewId',{reviewId})
-      .andWhere('comments.parentId is null')
-      .loadRelationCountAndMap('comments.childrenCount','comments.children')
-      .getMany()
+      .orderBy('comments.id')
+      .getMany();
 
-      return comment;
+      return this.formatCommentHierarchy(comment);
+  }
+
+  formatCommentHierarchy(comments: Comment[]): CommentResponseDto[] {
+    const result = comments.reduce((acc, cur) => {
+      const data = {
+        ...cur,
+        blocked: cur.abuseCount >= 5,
+      };
+      if (!cur.parentId) {
+        acc[cur.id] = {
+          ...data,
+          children: [],
+          childrenCount: 0,
+        };
+      } else {
+        if (acc[cur.parentId]) {
+          acc[cur.parentId].children = [
+            ...acc[cur.parentId].children,
+            data,
+          ];
+          acc[cur.parentId].childrenCount += 1;
+        }
+      }
+      return acc;
+    }, {});
+
+    return Object.values(result);
   }
 
 
@@ -111,5 +136,16 @@ export class CommentsService {
       return { isDeleted: false };
     }
     return { isDeleted: true };
+  }
+
+  async updateAbuseCount(id: number, amount: number): Promise<void> {
+    try {
+      const comment = await this.findOne(id);
+      comment.abuseCount += amount;
+
+      await this.commentRepository.save(comment);
+    } catch (error) {
+      
+    }
   }
 }

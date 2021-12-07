@@ -59,4 +59,7 @@ export class Comment {
 
   @OneToMany(() => Comment, (comment) => comment.parent)
   children: Comment[];
+
+  @Column({ default: 0 })
+  abuseCount: number;
 }
