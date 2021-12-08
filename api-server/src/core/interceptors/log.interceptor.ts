@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { v4 as uuid } from 'uuid';
 import { PrivacyReplacer } from './PrivacyReplacer';
+import { clone } from 'ramda';
 
 @Injectable()
 export class LogInterceptor implements NestInterceptor {
@@ -48,12 +49,16 @@ export class LogInterceptor implements NestInterceptor {
     const loggingParams: Record<string, any> = {
       executionId,
       user: this.getUser(context),
-      headers: this.privacyReplacer.replaceResponseHeader(response.header),
+      headers: this.privacyReplacer.replaceResponseHeader(
+        clone(response.header),
+      ),
     };
     if (data instanceof Error) {
       loggingParams.error = { message: data.message };
     } else {
-      loggingParams.body = this.privacyReplacer.replaceResponseBody(data);
+      loggingParams.body = this.privacyReplacer.replaceResponseBody(
+        clone(data),
+      );
     }
 
     this.responseLogger.log(JSON.stringify(loggingParams));
@@ -68,8 +73,10 @@ export class LogInterceptor implements NestInterceptor {
         executionId,
         user: this.getUser(context),
         path: request.path,
-        body: this.privacyReplacer.replaceRequestBody(request.body),
-        headers: this.privacyReplacer.replaceRequestHeader(request.headers),
+        body: this.privacyReplacer.replaceRequestBody(clone(request.body)),
+        headers: this.privacyReplacer.replaceRequestHeader(
+          clone(request.headers),
+        ),
       }),
     );
   }
@@ -92,5 +99,3 @@ export class LogInterceptor implements NestInterceptor {
     );
   }
 }
-
-/executionId":"(?<executionId>.*?)"/;
