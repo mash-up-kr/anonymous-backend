@@ -45,7 +45,7 @@ export class ReviewService {
       ? (
           await Promise.all(
             hashtags.map(
-              async (name) => await this.hashtagService.findOneByName(name),
+              async (name) => await this.hashtagService.upsert({ name }),
             ),
           )
         ).filter((v) => v)
@@ -53,9 +53,7 @@ export class ReviewService {
 
     // TODO: transaction?
     await this.appService.updateAppReviewCount(appName, hole, 1);
-    await this.reviewRepository.save(review);
-
-    return review;
+    return await this.reviewRepository.save(review);
   }
 
   async findAll(): Promise<Review[]> {
