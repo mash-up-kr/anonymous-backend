@@ -8,6 +8,9 @@ export class PrivacyReplacer {
       if ('password' in body) {
         body.password = '<privacy-masked>';
       }
+      if ('newPassword' in body) {
+        body.newPassword = '<privacy-masked>';
+      }
     }
 
     return body;
@@ -18,6 +21,9 @@ export class PrivacyReplacer {
     if (typeof body === 'object') {
       if ('token' in body) {
         body.token = '<privacy-masked>';
+      }
+      if ('accessToken' in body) {
+        body.accessToken = '<privacy-masked>';
       }
     }
 
