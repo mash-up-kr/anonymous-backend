@@ -50,11 +50,11 @@ export class SearchService {
       .loadRelationCountAndMap('comments.childrenCount', 'comments.children')
       .where('comments.parentId is null');
 
-    if (search.hole != null) {
+    if (search.hole) {
       queryBuilder.andWhere(`review.hole = :hole`, { hole: search.hole });
     }
 
-    if (search.userId != null) {
+    if (search.userId) {
       queryBuilder.andWhere(`review.user_id = :userId`, {
         userId: search.userId,
       });
