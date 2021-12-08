@@ -1,25 +1,26 @@
 import {
   Body,
   Controller,
-  Post,
-  UseGuards,
-  Request,
   Get,
   Patch,
+  Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ApiTags } from '@nestjs/swagger';
+import { SlackEvent } from '../slack/slack.event';
 import { UserService } from '../user/user.service';
+import { docs } from './auth.docs';
+import { AuthService } from './auth.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SendEmailDto } from './dto/send-email.dto';
-import { VerifyCodeDto } from './dto/verify-code.dto';
-import { ValidateNicknameDto } from './dto/validate-nickname.dto';
 import { AuthorizedRequest, SignUpDto } from './dto/sign-up.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { AuthService } from './auth.service';
-import { docs } from './auth.docs';
-import { LoginAuthGuard } from './guard/login-auth.guard';
+import { ValidateNicknameDto } from './dto/validate-nickname.dto';
+import { VerifyCodeDto } from './dto/verify-code.dto';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { SlackEvent } from '../slack/slack.event';
+import { LoginAuthGuard } from './guard/login-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -87,5 +88,11 @@ export class AuthController {
   @docs.updatePassword('새 비밀번호 업데이트')
   async updatePassword(@Body() dto: UpdatePasswordDto) {
     return this.authService.updatePassword(dto);
+  }
+
+  @Post('reset-password')
+  @docs.resetPassword('패스워드 재설정')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
 }

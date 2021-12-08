@@ -13,6 +13,7 @@ import { UserService } from '../user/user.service';
 import { MailSender } from './mail-sender';
 import { PasswordHasher } from './password-hasher';
 import { AuthUser, JwtPayload } from './auth.types';
+import { generate } from 'generate-password';
 import {
   SendEmailDto,
   SendEmailResponseDto,
@@ -24,6 +25,8 @@ import {
   UpdatePasswordDto,
   UpdatePasswordResponseDto,
   LoginResponseDto,
+  ResetPasswordDto,
+  ResetPasswordResponseDto,
 } from './dto';
 
 @Injectable()
@@ -39,10 +42,15 @@ export class AuthService {
     private readonly mailSender: MailSender,
   ) {}
 
-  async sendEmail({ email, allowEmailDuplicate }: SendEmailDto): Promise<SendEmailResponseDto> {
+  async sendEmail({
+    email,
+    allowEmailDuplicate,
+  }: SendEmailDto): Promise<SendEmailResponseDto> {
     const user = await this.userService.findOneByEmail(email);
-    if (user && !allowEmailDuplicate) return { isUserExist: true, isSend: false };
-    if (!user && allowEmailDuplicate) return { isUserExist: false, isSend: false };
+    if (user && !allowEmailDuplicate)
+      return { isUserExist: true, isSend: false };
+    if (!user && allowEmailDuplicate)
+      return { isUserExist: false, isSend: false };
 
     const verifyCode = await this.verifyCodeRepository.findOne({ email });
 
@@ -104,14 +112,13 @@ export class AuthService {
   ): Promise<User | null> {
     const user = await this.userService.findOneByEmail(email);
     if (!user) return null;
-    if (
-      await this.passwordHasher.equal({
-        plain: password,
-        hashed: user.password,
-      })
-    ) {
-      return user;
-    }
+
+    const isEqual = await this.passwordHasher.equal({
+      plain: password,
+      hashed: user.password,
+    });
+
+    if (isEqual) return user;
     return null;
   }
 
@@ -130,7 +137,6 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
     try {
       const user = await this.userService.createUser({
         email,
@@ -148,9 +154,10 @@ export class AuthService {
     }
   }
 
-  async updatePassword(
-    { email, newPassword }: UpdatePasswordDto,
-  ): Promise<UpdatePasswordResponseDto> {
+  async updatePassword({
+    email,
+    newPassword,
+  }: UpdatePasswordDto): Promise<UpdatePasswordResponseDto> {
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new HttpException(
@@ -161,13 +168,38 @@ export class AuthService {
     const isEqual = await this.passwordHasher.equal({
       plain: newPassword,
       hashed: user.password,
-    })
+    });
     if (isEqual) {
-      return { isUpdated: false }
+      return { isUpdated: false };
     }
     await this.userRepository.update(user, {
       password: await this.passwordHasher.hash(newPassword),
     });
     return { isUpdated: true };
+  }
+
+  async resetPassword({
+    email,
+  }: ResetPasswordDto): Promise<ResetPasswordResponseDto> {
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      throw new HttpException(
+        `Email ${email} is not exist`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const newPassword = generate({ length: 7, numbers: true });
+    await this.mailSender.send({
+      to: email,
+      subject: 'Appilogue 비밀번호 재설정',
+      text: `다음 비밀번호로 다시 로그인해주세요. ${newPassword}`,
+    });
+
+    await this.userRepository.update(user, {
+      password: await this.passwordHasher.hash(newPassword),
+    });
+
+    return { hasSent: true };
   }
 }
