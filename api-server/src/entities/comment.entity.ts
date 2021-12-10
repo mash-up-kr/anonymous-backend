@@ -57,6 +57,6 @@ export class Comment {
   @RelationId((comment: Comment) => comment.parent)
   parentId?: number;
 
-  @OneToMany(() => Comment, (comment) => comment.parent, { cascade: true })
+  @OneToMany(() => Comment, (comment) => comment.parent)
   children: Comment[];
 }
