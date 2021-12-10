@@ -25,12 +25,12 @@ export class ReviewLike {
   /**
    * relation
    */
-  @ManyToOne(() => User, (user) => user.reviewLikes)
+  @ManyToOne(() => User, (user) => user.reviewLikes, { onDelete: 'SET NULL' })
   user: User;
 
   /**
    * relation
    */
-  @ManyToOne(() => Review, (review) => review.likes)
+  @ManyToOne(() => Review, (review) => review.likes, { onDelete: 'SET NULL' })
   review: Review;
 }

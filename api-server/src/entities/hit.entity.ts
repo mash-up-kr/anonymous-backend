@@ -28,6 +28,6 @@ export class Hit {
   /**
    * relation
    */
-  @ManyToOne(() => User, (user) => user.hits)
+  @ManyToOne(() => User, (user) => user.hits, { onDelete: 'SET NULL' })
   user: User;
 }

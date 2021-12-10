@@ -47,7 +47,7 @@ export class AbuseReport {
   })
   status: Status;
 
-  @ManyToOne(() => User, (user) => user.abusereports)
+  @ManyToOne(() => User, (user) => user.abusereports, { onDelete: 'SET NULL' })
   user: User;
 
   @ApiProperty({ type: Number })
