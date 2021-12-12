@@ -8,6 +8,8 @@ import { AuthService } from './auth.service';
 import { VerifyCode } from '../../entities/verify-code.entity';
 import { User } from '../../entities/user.entity';
 import { UserModule } from '../user/user.module';
+import { Comment } from '../../entities/comment.entity';
+import { Review } from '../../entities/review.entity';
 import { PasswordHasher } from './password-hasher';
 import { UserService } from '../user/user.service';
 import { MailSender } from './mail-sender';
@@ -19,7 +21,7 @@ import { LocalStrategy } from './strategy/local.strategy';
     UserModule,
     ConfigModule,
     PassportModule,
-    TypeOrmModule.forFeature([VerifyCode, User]),
+    TypeOrmModule.forFeature([VerifyCode, User, Comment, Review]),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {

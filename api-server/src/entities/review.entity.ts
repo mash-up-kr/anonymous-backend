@@ -45,7 +45,7 @@ export class Review {
   })
   hashtags: Hashtag[];
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'SET NULL' })
   user: User;
 
   @ManyToOne(() => App, (app) => app.reviews)

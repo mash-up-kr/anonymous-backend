@@ -20,10 +20,10 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Review, (review) => review.comments)
+  @ManyToOne(() => Review, (review) => review.comments, { onDelete: 'SET NULL' })
   review: Promise<Review>;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   user: User;
 
   @ApiProperty({ type: Number })
@@ -49,7 +49,7 @@ export class Comment {
   /**
    * 답글
    */
-  @ManyToOne(() => Comment)
+  @ManyToOne(() => Comment, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'parentId', referencedColumnName: 'id' })
   parent?: Comment;
 

@@ -2,6 +2,8 @@ import { Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
+import { Comment } from '../../entities/comment.entity';
+import { Review } from '../../entities/review.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { DeleteUserResponseDto } from './dto/delete-user.dto';
@@ -11,6 +13,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+    @InjectRepository(Review)
+    private reviewRepository: Repository<Review>,
   ) {}
 
   async createUser(data: CreateUserDto): Promise<User> {
@@ -48,6 +54,11 @@ export class UserService {
   }
 
   async deleteUserById(id: number): Promise<DeleteUserResponseDto> {
+    const user = await this.usersRepository.findOne(id);
+    const comments = await this.commentRepository.find({ where: { user: user } });
+    const reviews = await this.reviewRepository.find({ where: { user: user } });
+    await this.commentRepository.softRemove(comments);
+    await this.reviewRepository.softRemove(reviews);
     await this.usersRepository.delete(id);
     return { isDelete: true };
   }
