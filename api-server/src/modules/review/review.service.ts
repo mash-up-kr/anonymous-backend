@@ -178,4 +178,33 @@ export class ReviewService {
       throw new ForbiddenException(`No alreadylike`);
     }
   }
+
+  async upsertReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.reviewRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds === '') {
+      await this.reviewRepository.save({ ...review, reportUserIds: userId.toString() });
+    } else {
+      const reportUserIdList = review.reportUserIds.split(',');
+      if (reportUserIdList.findIndex((v) => Number(v) === userId) !== -1) return;
+      await this.reviewRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.concat(userId.toString()).join(','),
+      });
+    }
+  }
+
+  async deleteReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.reviewRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds !== '') {
+      const reportUserIdList = review.reportUserIds.split(',');
+      await this.reviewRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.filter((v) => v !== userId.toString()).join(','),
+      });
+    }
+  }
 }

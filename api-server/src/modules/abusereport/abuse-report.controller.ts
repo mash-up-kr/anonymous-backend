@@ -64,8 +64,12 @@ export class AbuseReportController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @docs.remove('신고 삭제')
-  async remove(@Param('id') id: string) {
-    return await this.abusereportService.remove(+id);
+  async remove(
+    @Request() req: AuthorizedRequest,
+    @Param('id') id: string,
+  ) {
+    return await this.abusereportService.remove(req.user, +id);
   }
 }
