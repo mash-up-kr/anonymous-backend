@@ -39,6 +39,10 @@ export class Review {
   })
   hole: Hole;
 
+  @ApiProperty()
+  @Column({ default: '' })
+  reportUserIds: string;
+
   @ManyToMany(() => Hashtag, (hashtag) => hashtag.reviews)
   @JoinTable({
     name: 'review_hashtags',
