@@ -52,9 +52,10 @@ export class AbuseReportController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @docs.findOne('단일 신고 조회')
-  async findOne(@Param('id') id: string) {
-    return await this.abusereportService.findOne(+id);
+  async findOne(@Request() req: AuthorizedRequest, @Param('id') id: string) {
+    return await this.abusereportService.findOne(req.user, +id);
   }
 
   @Patch(':id')

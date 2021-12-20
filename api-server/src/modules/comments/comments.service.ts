@@ -29,7 +29,7 @@ export class CommentsService {
 
     let review = null;
     if (reviewId) {
-      review = await this.reviewService.findOne(reviewId);
+      review = await this.reviewService.findOne(reviewId, user);
     }
 
     let parent = null;
@@ -48,7 +48,7 @@ export class CommentsService {
     return comment;
   }
 
-  async findAll(reviewId: number): Promise<Comment[]> {
+  async findAll({ id: userId }: User, reviewId: number): Promise<Comment[]> {
 
     const comment = await this.commentRepository
       .createQueryBuilder('comments')
@@ -61,6 +61,8 @@ export class CommentsService {
       .where('comments.review=:reviewId',{reviewId})
       .andWhere('comments.parentId is null')
       .loadRelationCountAndMap('comments.childrenCount','comments.children')
+      .andWhere('FIND_IN_SET(:userId, comments.report_user_ids) = 0', { userId })
+      .andWhere('LENGTH(comments.report_user_ids) - LENGTH(REPLACE(comments.report_user_ids, ",", "")) < 4')
       .getMany()
 
       return comment;

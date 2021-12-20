@@ -21,8 +21,9 @@ export class CommentsController {
 
   @docs.findAll('댓글 목록 조회')
   @Get(':review_id')
-  findAll(@Param('review_id', ParseIntPipe) id: number) {
-    return this.commentsService.findAll(id);
+  @UseGuards(JwtAuthGuard)
+  findAll(@Request() req: AuthorizedRequest, @Param('review_id', ParseIntPipe) id: number) {
+    return this.commentsService.findAll(req.user, id);
   }
 
   @docs.update('댓글 수정')

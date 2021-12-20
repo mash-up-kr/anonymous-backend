@@ -60,7 +60,7 @@ export class ReviewService {
     return this.reviewRepository.find();
   }
 
-  async findOne(id: number): Promise<Review> {
+  async findOne(id: number, { id: userId }: JwtUser): Promise<Review> {
     if (isNaN(id)) {
       throw new BadRequestException();
     }
@@ -82,7 +82,13 @@ export class ReviewService {
       .leftJoinAndSelect('review.hashtags', 'hashtags')
       .leftJoinAndSelect('review.likes', 'likes')
       .leftJoinAndSelect('review.user', 'user')
-      .leftJoinAndSelect('review.comments', 'comments')
+      .leftJoinAndSelect(
+        'review.comments',
+        'comments',
+        `FIND_IN_SET(:userId, comments.report_user_ids) = 0
+          AND LENGTH(comments.report_user_ids) - LENGTH(REPLACE(comments.report_user_ids, ",", "")) < 4`,
+        { userId },
+      )
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')

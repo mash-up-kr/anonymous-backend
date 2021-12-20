@@ -26,7 +26,7 @@ export class AbuseReportService {
     if (_abuseReport) throw new BadRequestException('this abuse report is already exist');
 
     if (type === AbuseType.Review) {
-      const review = await this.reviewService.findOne(targetId);
+      const review = await this.reviewService.findOne(targetId, user);
       if (!review) throw new NotFoundException();
       await this.reviewService.upsertReportUserIds(review.id, user.id);
     } else if (type === AbuseType.Reply) {
@@ -49,13 +49,13 @@ export class AbuseReportService {
     return this.abuseReportRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(user: User, id: number) {
     const abuseReport = await this.abuseReportRepository.findOne(id);
     if (!abuseReport) {
       throw new NotFoundException();
     }
     if (abuseReport.type === 'review') {
-      const review = this.reviewService.findOne(abuseReport.targetId);
+      const review = this.reviewService.findOne(abuseReport.targetId, user);
       return { ...abuseReport, review };
     } else if (abuseReport.type === 'comment') {
       const comment = this.commentService.findOne(abuseReport.targetId);
@@ -79,7 +79,7 @@ export class AbuseReportService {
     }
 
     if (abuseReport.type === AbuseType.Review) {
-      const review = await this.reviewService.findOne(abuseReport.targetId);
+      const review = await this.reviewService.findOne(abuseReport.targetId, user);
       if (!review) throw new NotFoundException();
       await this.reviewService.deleteReportUserIds(review.id, user.id);
     } else if (abuseReport.type === AbuseType.Reply) {
