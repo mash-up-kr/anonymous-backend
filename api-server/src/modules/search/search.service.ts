@@ -5,6 +5,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { JwtUser } from 'src/entities/user.entity';
 import { App } from 'src/entities/app.entity';
 import { Hole, Review } from 'src/entities/review.entity';
 import { Repository } from 'typeorm';
@@ -23,7 +24,7 @@ export class SearchService {
     private readonly appService: AppService,
   ) {}
 
-  async searchReview(pagination: IPaginationOptions, search: SearchOption) {
+  async searchReview({ id: userId }: JwtUser, pagination: IPaginationOptions, search: SearchOption) {
     const queryBuilder = this.reviewRepository.createQueryBuilder('review');
 
     queryBuilder
@@ -44,11 +45,19 @@ export class SearchService {
       .leftJoin('review.user', 'user')
       .leftJoin('review.likes', 'likes')
       .leftJoinAndSelect('review.hashtags', 'hashtags')
-      .leftJoin('review.comments', 'comments')
+      .leftJoin(
+        'review.comments',
+        'comments',
+        `FIND_IN_SET(:userId, comments.report_user_ids) = 0
+          AND LENGTH(comments.report_user_ids) - LENGTH(REPLACE(comments.report_user_ids, ",", "")) < 4`,
+        { userId },
+      )
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')
       .loadRelationCountAndMap('comments.childrenCount', 'comments.children')
-      .where('comments.parentId is null');
+      .where('comments.parentId is null')
+      .andWhere('FIND_IN_SET(:userId, review.report_user_ids) = 0', { userId })
+      .andWhere('LENGTH(review.report_user_ids) - LENGTH(REPLACE(review.report_user_ids, ",", "")) < 4');
 
     if (search.hole) {
       queryBuilder.andWhere(`review.hole = :hole`, { hole: search.hole });

@@ -29,7 +29,7 @@ export class CommentsService {
 
     let review = null;
     if (reviewId) {
-      review = await this.reviewService.findOne(reviewId);
+      review = await this.reviewService.findOne(reviewId, user);
     }
 
     let parent = null;
@@ -48,7 +48,7 @@ export class CommentsService {
     return comment;
   }
 
-  async findAll(reviewId: number): Promise<Comment[]> {
+  async findAll({ id: userId }: User, reviewId: number): Promise<Comment[]> {
 
     const comment = await this.commentRepository
       .createQueryBuilder('comments')
@@ -61,6 +61,8 @@ export class CommentsService {
       .where('comments.review=:reviewId',{reviewId})
       .andWhere('comments.parentId is null')
       .loadRelationCountAndMap('comments.childrenCount','comments.children')
+      .andWhere('FIND_IN_SET(:userId, comments.report_user_ids) = 0', { userId })
+      .andWhere('LENGTH(comments.report_user_ids) - LENGTH(REPLACE(comments.report_user_ids, ",", "")) < 4')
       .getMany()
 
       return comment;
@@ -111,5 +113,34 @@ export class CommentsService {
       return { isDeleted: false };
     }
     return { isDeleted: true };
+  }
+
+  async upsertReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.commentRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds === '') {
+      await this.commentRepository.save({ ...review, reportUserIds: userId.toString() });
+    } else {
+      const reportUserIdList = review.reportUserIds.split(',');
+      if (reportUserIdList.findIndex((v) => Number(v) === userId) !== -1) return;
+      await this.commentRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.concat(userId.toString()).join(','),
+      });
+    }
+  }
+
+  async deleteReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.commentRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds !== '') {
+      const reportUserIdList = review.reportUserIds.split(',');
+      await this.commentRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.filter((v) => v !== userId.toString()).join(','),
+      });
+    }
   }
 }

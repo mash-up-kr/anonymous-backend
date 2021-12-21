@@ -35,6 +35,10 @@ export class Comment {
   content: string;
 
   @ApiProperty()
+  @Column({ default: '' })
+  reportUserIds: string;
+
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 

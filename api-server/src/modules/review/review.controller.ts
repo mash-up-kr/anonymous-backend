@@ -34,9 +34,10 @@ export class ReviewController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @docs.findOne('단일 리뷰 조회')
-  async findOne(@Param('id') id: string) {
-    return await this.reviewService.findOne(+id);
+  async findOne(@Param('id') id: string, @AuthUser() user: JwtUser) {
+    return await this.reviewService.findOne(+id, user);
   }
 
   @Patch(':id')

@@ -60,7 +60,7 @@ export class ReviewService {
     return this.reviewRepository.find();
   }
 
-  async findOne(id: number): Promise<Review> {
+  async findOne(id: number, { id: userId }: JwtUser): Promise<Review> {
     if (isNaN(id)) {
       throw new BadRequestException();
     }
@@ -82,7 +82,13 @@ export class ReviewService {
       .leftJoinAndSelect('review.hashtags', 'hashtags')
       .leftJoinAndSelect('review.likes', 'likes')
       .leftJoinAndSelect('review.user', 'user')
-      .leftJoinAndSelect('review.comments', 'comments')
+      .leftJoinAndSelect(
+        'review.comments',
+        'comments',
+        `FIND_IN_SET(:userId, comments.report_user_ids) = 0
+          AND LENGTH(comments.report_user_ids) - LENGTH(REPLACE(comments.report_user_ids, ",", "")) < 4`,
+        { userId },
+      )
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
       .leftJoinAndSelect('comments.children', 'children')
@@ -176,6 +182,35 @@ export class ReviewService {
       await this.reviewLikeRepository.remove(alreadyLike);
     } else {
       throw new ForbiddenException(`No alreadylike`);
+    }
+  }
+
+  async upsertReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.reviewRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds === '') {
+      await this.reviewRepository.save({ ...review, reportUserIds: userId.toString() });
+    } else {
+      const reportUserIdList = review.reportUserIds.split(',');
+      if (reportUserIdList.findIndex((v) => Number(v) === userId) !== -1) return;
+      await this.reviewRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.concat(userId.toString()).join(','),
+      });
+    }
+  }
+
+  async deleteReportUserIds(id: number, userId: number): Promise<void> {
+    const review = await this.reviewRepository.findOne(id);
+    if (!review) throw new NotFoundException();
+
+    if (review.reportUserIds !== '') {
+      const reportUserIdList = review.reportUserIds.split(',');
+      await this.reviewRepository.save({
+        ...review,
+        reportUserIds: reportUserIdList.filter((v) => v !== userId.toString()).join(','),
+      });
     }
   }
 }
