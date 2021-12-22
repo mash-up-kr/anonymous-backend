@@ -53,7 +53,13 @@ export class SearchService {
         { userId },
       )
       .leftJoin('likes.user', 'like_user')
-      .leftJoinAndSelect('comments.children', 'children')
+      .leftJoinAndSelect(
+        'comments.children',
+        'children',
+        `FIND_IN_SET(:userId, children.report_user_ids) = 0
+          AND LENGTH(children.report_user_ids) - LENGTH(REPLACE(children.report_user_ids, ",", "")) < 4`,
+        { userId },
+      )
       .loadRelationCountAndMap('comments.childrenCount', 'comments.children')
       .where('comments.parentId is null')
       .andWhere('FIND_IN_SET(:userId, review.report_user_ids) = 0', { userId })

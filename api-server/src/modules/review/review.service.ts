@@ -91,7 +91,13 @@ export class ReviewService {
       )
       .leftJoin('comments.user', 'comment_user')
       .leftJoin('likes.user', 'like_user')
-      .leftJoinAndSelect('comments.children', 'children')
+      .leftJoinAndSelect(
+        'comments.children',
+        'children',
+        `FIND_IN_SET(:userId, children.report_user_ids) = 0
+          AND LENGTH(children.report_user_ids) - LENGTH(REPLACE(children.report_user_ids, ",", "")) < 4`,
+        { userId },
+      )
       .loadRelationCountAndMap('comments.childrenCount', 'comments.children')
       .where('review.id = :id', { id })
       .andWhere('comments.parentId is null')
